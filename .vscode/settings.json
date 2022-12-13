@@ -1,0 +1,3 @@
+{
+  "rust-analyzer.linkedProjects": ["experiments/actix-rest-api/Cargo.toml"]
+}

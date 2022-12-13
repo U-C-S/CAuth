@@ -1,0 +1,1 @@
+This Directory contains all the initial exploration and experimentation of various tools, techniques and libraries before using them in development of the project.
