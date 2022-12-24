@@ -1,0 +1,38 @@
+.ListEntry {
+  display: flex;
+  height: 5em;
+  /* font-size: 1em; */
+}
+
+.logo-smol {
+  aspect-ratio : 1 / 1;
+
+  height: 100%;
+  /* width: 5em;
+  height: 100%; */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: blueviolet;
+}
+
+.text {
+  background-color: cadetblue;
+  /* line-height: 0.5em; */
+  height: 100%;
+  width: 100%;
+}
+
+.headline, .subline {
+  line-height: 100%;
+  padding-left: 1em;
+  padding-right: 1em;
+
+}
+
+
+img {
+  width: 70%;
+}

@@ -1,0 +1,14 @@
+.Prompt {
+  width: 480px;
+  background-color: blue;
+}
+
+.heading {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+button {
+  width: 50%;
+  line-height: 3em;
+}
