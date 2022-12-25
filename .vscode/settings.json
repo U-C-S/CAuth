@@ -1,6 +1,7 @@
 {
   "rust-analyzer.linkedProjects": [
     "experiments/actix-rest-api/Cargo.toml",
-    "experiments/axum-rest-api/Cargo.toml"
+    "experiments/axum-rest-api/Cargo.toml",
+    "packages/cauth-server/Cargo.toml"
   ]
 }
