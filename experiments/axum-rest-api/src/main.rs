@@ -1,17 +1,21 @@
-async fn say_world() {
-    println!("world");
-}
+use axum::{routing::get, Router};
+use std::net::SocketAddr;
 
 #[tokio::main]
 async fn main() {
-    // Calling `say_world()` does not execute the body of `say_world()`.
-    let op = say_world();
+    let app = Router::new().nest("/", nesting_routes());
 
-    // This println! comes first
-    println!("hello");
-
-    // Calling `.await` on `op` starts executing `say_world`.
-    op.await;
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }
 
-async fn nesting_routes() {}
+fn nesting_routes() -> Router {
+    async fn echo() -> String {
+        String::from("Echo")
+    }
+
+    Router::new().route("/echo", get(echo))
+}
