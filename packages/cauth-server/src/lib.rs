@@ -1,8 +1,4 @@
-use axum::{
-    body,
-    routing::{get, post},
-    Router,
-};
+use axum::{routing::get, Router};
 use std::net::SocketAddr;
 
 pub struct AdminOpts {
@@ -74,27 +70,27 @@ mod tests {
         // assert_eq!(y.status(), 200);
         let yx = &y.text().await.unwrap();
         // println!("{:?}", &yx);
-        assert_eq!(yx, "Hello, World!");
+        assert_eq!(yx, "echo");
     }
 
     #[tokio::test]
     async fn it_works2() {
         tokio::spawn(async move {
-            let x = Server::new(SocketAddr::from(([127, 0, 0, 1], 3000)));
+            let x = Server::new(SocketAddr::from(([127, 0, 0, 1], 3001)));
             x.run().await;
         });
 
         let stringy = String::from("meowmeow");
         let client = reqwest::Client::new();
         let res = client
-            .post("http://127.0.0.1:3000/echo")
+            .post("http://127.0.0.1:3001/echo")
             .body(stringy.clone())
             .send()
             .await
             .unwrap();
 
         let resbody = res.text().await.unwrap();
-        println!("{:?}", &resbody);
+        // println!("{:?}", &resbody);
         assert_eq!(resbody, stringy);
     }
 }
