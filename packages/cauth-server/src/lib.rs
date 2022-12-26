@@ -1,15 +1,17 @@
-use axum::{routing::get, Router};
+// Initial Messy Code™
+mod routes;
+
+use axum::Router;
+use routes::echo;
 use std::net::SocketAddr;
 
 pub struct AdminOpts {
     pub access_key: String,
 }
 
-pub struct Middleware {}
-
 pub struct Server {
     pub addr: SocketAddr,
-    //pub middleware: Option<Vec<Box<dyn Middleware>>>,
+    // pub middleware: Option<ServiceBuilder<>>,
     // pub admin: AdminOpts,
 }
 
@@ -40,11 +42,7 @@ impl Server {
     // }
 
     pub async fn run(self) {
-        let app = Router::new().route(
-            "/echo",
-            get(|| async { "echo" }).post(|body: String| async { body }),
-        );
-        // .nest("/", todo!());
+        let app = Router::new().nest("/", echo::routes());
 
         axum::Server::bind(&self.addr)
             .serve(app.into_make_service())
