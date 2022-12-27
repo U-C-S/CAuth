@@ -1,6 +1,16 @@
+@import url(./index.css);
+
+* {
+  box-sizing: border-box;
+}
+
 .Prompt {
   width: 480px;
-  background-color: blue;
+  background-color: var(--bgcolor);
+  /* padding: 1em; */
+  border-radius: 1em;
+  border: 1px solid #47B3FF;
+  /* box-shadow: 0 0 10px #47B3FF; */
 }
 
 .heading {
@@ -8,7 +18,19 @@
   text-align: center;
 }
 
+.buttons {
+  display: flex;
+}
+
 button {
-  width: 50%;
+  border: none;
+  border-radius: 1em;
   line-height: 3em;
+  background-color: var(--btn-color);
+  color: white;
+  flex-grow: 1;
+  margin: 0.5em;
+}
+button:hover {
+  cursor: pointer;
 }

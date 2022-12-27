@@ -19,8 +19,10 @@ export default function Prompt() {
             <div>
                 <ListEntry />
             </div>
-            <button onClick={handleCancel}>Cancel</button>
-            <button onClick={handleAuthorize}>Authorize</button>
+            <div class="buttons">
+                <button onClick={handleCancel}>Cancel</button>
+                <button onClick={handleAuthorize}>Authorize</button>
+            </div>
         </div>
     )
 }

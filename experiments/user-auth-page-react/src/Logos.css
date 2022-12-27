@@ -1,5 +1,5 @@
 .Logos {
-  background-color: green;
+  /* background-color: green; */
   
 }
 
@@ -13,7 +13,7 @@
 .logo {
   aspect-ratio: 1 / 1;
   width: 8em;
-  background-color: chartreuse;
+  /* background-color: chartreuse; */
   
   display: flex;
   align-items: center;

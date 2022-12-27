@@ -1,26 +1,28 @@
+@import url(./index.css);
+
 .ListEntry {
   display: flex;
   height: 5em;
-  /* font-size: 1em; */
+  background-color: var(--list-bg-color);
+  border-radius: 1em;
+  margin: 0.5em;
+  border: 2px solid #3DCCC7;
 }
 
 .logo-smol {
   aspect-ratio : 1 / 1;
-
+  
   height: 100%;
-  /* width: 5em;
-  height: 100%; */
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background-color: blueviolet;
+  /* background-color: blueviolet; */
 }
 
 .text {
-  background-color: cadetblue;
-  /* line-height: 0.5em; */
+  /* background-color: cadetblue; */
   height: 100%;
   width: 100%;
 }
