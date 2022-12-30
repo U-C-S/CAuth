@@ -5,7 +5,7 @@
 /.pnp
 .pnp.js
 
-.next
+.next/
 # production
 /build
 
