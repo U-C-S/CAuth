@@ -1,0 +1,26 @@
+.Logos {
+  /* background-color: green; */
+  
+}
+
+.logoPack {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.logo {
+  aspect-ratio: 1 / 1;
+  width: 8em;
+  /* background-color: chartreuse; */
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.link {
+  text-align: center;
+  width: 3em;
+}
