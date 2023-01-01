@@ -9,11 +9,13 @@
   background-color: var(--bgcolor);
   /* padding: 1em; */
   border-radius: 1em;
-  border: 1px solid #47B3FF;
+  border: 1px solid #aaaaaa;
   /* box-shadow: 0 0 10px #47B3FF; */
+  padding-top: 2em;
 }
 
 .heading {
+  font-family: 'Segoe UI','Roboto','Helvetica','Arial',sans-serif;
   font-size: 1.5em;
   text-align: center;
 }
@@ -22,6 +24,11 @@
   display: flex;
 }
 
+.permissions {
+  list-style: none;
+  line-height: 1em;
+  opacity: 0.6;
+}
 .button {
   border: none;
   border-radius: 1em;

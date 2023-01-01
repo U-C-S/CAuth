@@ -12,7 +12,7 @@
 
 .logo {
   aspect-ratio: 1 / 1;
-  width: 8em;
+  width: 5em;
   /* background-color: chartreuse; */
   
   display: flex;
@@ -21,6 +21,14 @@
 }
 
 .link {
+  opacity: 0.7;
+  width: 5em;
+  border: none;
+  border-top: 0.4em dotted black;
+}
+
+/* .link {
   text-align: center;
   width: 3em;
-}
+} */
+
