@@ -1,10 +1,9 @@
 // Initial Messy Code™
-mod routes;
-pub mod proto;
 pub mod auth;
+pub mod proto;
+pub mod routes;
 
 use axum::Router;
-use routes::echo;
 use std::net::SocketAddr;
 
 pub struct AdminOpts {
@@ -44,7 +43,7 @@ impl Server {
     // }
 
     pub async fn run(self) {
-        let app = Router::new().nest("/", echo::routes());
+        let app = Router::new().nest("/", routes::echo::routes());
 
         axum::Server::bind(&self.addr)
             .serve(app.into_make_service())
