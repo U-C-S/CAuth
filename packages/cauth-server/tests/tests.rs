@@ -6,7 +6,7 @@ use std::net::SocketAddr;
 #[tokio::test]
 async fn it_works() {
     tokio::spawn(async move {
-        let x = Server::new(SocketAddr::from(([127, 0, 0, 1], 3000)));
+        let x: Server = Server::default();
         x.run().await;
     });
 
@@ -20,7 +20,10 @@ async fn it_works() {
 #[tokio::test]
 async fn it_works2() {
     tokio::spawn(async move {
-        let x = Server::new(SocketAddr::from(([127, 0, 0, 1], 3001)));
+        let x = Server {
+            addr: SocketAddr::from(([127, 0, 0, 1], 3001)),
+            ..Default::default()
+        };
         x.run().await;
     });
 
