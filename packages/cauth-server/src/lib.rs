@@ -1,6 +1,4 @@
 // Initial Messy Code™
-pub mod auth;
-pub mod proto;
 pub mod routes;
 
 use axum::Router;
