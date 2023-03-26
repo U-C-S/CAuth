@@ -1,2 +1,2 @@
 [workspace]
-members = ["proto/auth", "packages/cauth-server"]
+members = ["proto/auth", "proto/auth/migration", "packages/cauth-server"]
