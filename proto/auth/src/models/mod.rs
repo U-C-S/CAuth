@@ -27,7 +27,7 @@ pub type SharedState = Arc<RwLock<State>>;
 pub fn shared_state() -> State {
   State {
     services: HashMap::from([(
-      "TimeSerivce".to_string(),
+      "TimeService".to_string(),
       Service {
         api: "TimeSerivce".to_string(),
         description: "TimeSerivce".to_string(),
