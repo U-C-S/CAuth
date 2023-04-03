@@ -2,15 +2,16 @@ use axum::{
   extract::{Path, State},
   http::StatusCode,
   response::IntoResponse,
-  routing::get,
+  routing::{get, post},
   Json, Router,
 };
 
-use crate::models::{self, SharedState};
+use crate::models::{self, Service, SharedState};
 
 pub fn service_routes(state: models::SharedState) -> Router<()> {
   Router::new()
-    .route("/admin/:serv_name", get(get_service_info))
+    .route("/get/:serv_name", get(get_service_info))
+    .route("/add", post(add_service))
     .route("/user", get(get_service_info))
     .with_state(state)
 }
@@ -31,17 +32,45 @@ async fn get_service_info(
   }
 }
 
-// async fn add_service() -> &'static str {
-//   // x.insert(
-//   //   "hi".to_string(),
-//   //   Service {
-//   //     api: "hi".to_string(),
-//   //     description: "hi".to_string(),
-//   //     user: "lol".to_string(),
-//   //   },
-//   // );
-//   "Add service"
-// }
+#[derive(serde::Deserialize)]
+struct ServiceReq {
+  name: String,
+  api: String,
+  description: String,
+  user: String,
+}
+
+#[derive(serde::Serialize)]
+struct GenericResponse {
+  status: String,
+  message: String,
+}
+
+#[axum_macros::debug_handler]
+async fn add_service(
+  State(state): State<SharedState>,
+  Json(payload): Json<ServiceReq>,
+) -> impl IntoResponse {
+  let services = &mut state.write().await.services;
+
+  let ins = services.insert(
+    payload.name,
+    Service {
+      api: payload.api,
+      description: payload.description,
+      user: payload.user,
+    },
+  );
+
+  if ins.is_none() {
+    Ok(Json(GenericResponse {
+      status: "success".to_string(),
+      message: "Service added".to_string(),
+    }))
+  } else {
+    Err(StatusCode::BAD_REQUEST)
+  }
+}
 
 // async fn delete_service() -> &'static str {
 //   "Delete service"
