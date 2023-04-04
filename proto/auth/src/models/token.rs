@@ -17,6 +17,7 @@ pub struct JwtPayload {
   pub exp: usize,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct JwtPayloadForServManage {
   pub user_name: String,
   pub exp: usize,

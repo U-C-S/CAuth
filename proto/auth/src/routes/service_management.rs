@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use axum::{
   extract::{Path, State},
   http::StatusCode,
@@ -5,15 +7,59 @@ use axum::{
   routing::{get, post},
   Json, Router,
 };
+use jsonwebtoken::{encode, EncodingKey, Header};
+use serde::{Deserialize, Serialize};
 
-use crate::models::{self, Service, SharedState};
+use crate::models::{
+  self,
+  token::{JwtPayload, JwtPayloadForServManage},
+  Service, SharedState,
+};
 
 pub fn service_routes(state: models::SharedState) -> Router<()> {
   Router::new()
     .route("/get/:serv_name", get(get_service_info))
+    .route("/get/all_owned_services", get(get_all_owned_services))
     .route("/add", post(add_service))
-    .route("/user", get(get_service_info))
+    .nest("/auth", service_manage_auth_routes())
     .with_state(state)
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ServicesListResponse {
+  name: String,
+  api: String,
+  description: String,
+}
+
+#[axum_macros::debug_handler]
+async fn get_all_owned_services(
+  claims: JwtPayload,
+  State(state): State<SharedState>,
+) -> impl IntoResponse {
+  let services = state.read().await.services.clone();
+
+  let x: Vec<_> = services
+    .iter()
+    .filter(|(_, val)| val.user == claims.user_name)
+    .map(|(key, val)| ServicesListResponse {
+      name: key.clone(),
+      api: val.api.clone(),
+      description: val.description.clone(),
+    })
+    .collect();
+
+  Json(x)
+
+  // let mut owned_services = HashMap::new();
+
+  // for (key, val) in services {
+  //   if val.user == Claims.user_name {
+  //     owned_services.insert(key, val);
+  //   }
+  // }
+
+  // Ok(Json(owned_services))
 }
 
 #[axum_macros::debug_handler]
@@ -63,19 +109,48 @@ async fn add_service(
   );
 
   if ins.is_none() {
-    Ok(Json(GenericResponse {
-      status: "success".to_string(),
-      message: "Service added".to_string(),
-    }))
+    Ok(Json(HashMap::from([
+      ("status", "success"),
+      ("message", "Service added"),
+    ])))
   } else {
     Err(StatusCode::BAD_REQUEST)
   }
 }
 
-// async fn delete_service() -> &'static str {
-//   "Delete service"
-// }
+#[derive(Debug, Serialize, Deserialize)]
+struct ServiceAuthReq {
+  user_name: String,
+  password: String,
+}
 
-// async fn update_service() -> &'static str {
-//   "Update service"
-// }
+fn service_manage_auth_routes() -> Router<SharedState> {
+  #[axum_macros::debug_handler]
+  async fn loginroute(
+    State(state): State<SharedState>,
+    Json(creds): Json<ServiceAuthReq>,
+  ) -> impl IntoResponse {
+    let users = &state.read().await.users;
+
+    if let Some(user) = users.get(&creds.user_name) {
+      if user.password == creds.password {
+        let key = encode(
+          &Header::default(),
+          &JwtPayloadForServManage {
+            user_name: creds.user_name,
+            exp: 50000,
+          },
+          &EncodingKey::from_secret("secret".as_ref()),
+        );
+
+        Ok(key.unwrap())
+      } else {
+        Err(StatusCode::UNAUTHORIZED)
+      }
+    } else {
+      Err(StatusCode::UNAUTHORIZED)
+    }
+  }
+
+  Router::new().route("/login", get(loginroute))
+}
