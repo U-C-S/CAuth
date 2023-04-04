@@ -17,6 +17,11 @@ pub struct JwtPayload {
   pub exp: usize,
 }
 
+pub struct JwtPayloadForServManage {
+  pub user_name: String,
+  pub exp: usize,
+}
+
 #[async_trait]
 impl<S> FromRequestParts<S> for JwtPayload
 where

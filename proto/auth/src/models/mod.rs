@@ -1,3 +1,5 @@
+pub mod token;
+
 use std::{collections::HashMap, sync::Arc};
 
 use tokio::sync::RwLock;
@@ -5,7 +7,6 @@ use tokio::sync::RwLock;
 #[derive(Debug, serde::Deserialize, serde::Serialize, Clone)]
 pub struct Service {
   pub description: String,
-  // version: String,
   pub api: String,
   pub user: String,
 }
@@ -15,6 +16,8 @@ pub struct User {
   pub email: String,
   pub password: String,
 }
+
+// pub struct Username(String);
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct State {
