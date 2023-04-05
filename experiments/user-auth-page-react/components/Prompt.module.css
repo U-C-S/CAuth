@@ -1,21 +1,44 @@
-@import url(./index.css);
+.ListEntry {
+  display: flex;
+  height: 5em;
+  background-color: var(--list-bg-color);
+  border-radius: 1em;
+  margin: 0.5em;
+  border: 2px solid #3DCCC7;
+}
 
-/* * {
-  box-sizing: border-box;
-} */
+.logoSmol {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text {
+  height: 100%;
+  width: 100%;
+}
+
+.headline, .subline {
+  line-height: 100%;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.imgg {
+  width: 70%;
+}
 
 .Prompt {
   width: 480px;
   background-color: var(--bgcolor);
-  /* padding: 1em; */
   border-radius: 1em;
   border: 1px solid #aaaaaa;
-  /* box-shadow: 0 0 10px #47B3FF; */
   padding-top: 2em;
 }
 
 .heading {
-  font-family: 'Segoe UI','Roboto','Helvetica','Arial',sans-serif;
+  font-family: "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif;
   font-size: 1.5em;
   text-align: center;
 }
@@ -33,11 +56,31 @@
   border: none;
   border-radius: 1em;
   line-height: 3em;
-  /* background-color: var(--btn-color); */
   color: white;
   flex-grow: 1;
   margin: 0.5em;
 }
 .button:hover {
   cursor: pointer;
+}
+
+.logoPack {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  aspect-ratio: 1 / 1;
+  width: 5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.link {
+  opacity: 0.7;
+  width: 5em;
+  border: none;
+  border-top: 0.4em dotted black;
 }

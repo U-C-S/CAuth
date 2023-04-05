@@ -1,9 +1,8 @@
 import React from 'react'
 import styles from './Prompt.module.css'
 
+
 import Logos from './Logos'
-// import ListEntry from './ListEntry'
-// import avatar from '../images/avatar.svg'
 
 import { Button } from '@mantine/core';
 import { Group, Avatar, Text, Accordion } from '@mantine/core';
@@ -16,6 +15,37 @@ import { Group, Avatar, Text, Accordion } from '@mantine/core';
 //   perms: "Bender Bending Rodríguez, (born September 4, 2996), designated Bending Unit 22, and commonly known as Bender, is a bending unit created by a division of MomCorp in Tijuana, Mexico, and his serial number is 2716057. His mugshot id number is 01473. He is Fry's best friend.",
 // }
 
+
+export default function ListEntry() {
+  return (
+    <div className={styles.ListEntry}>
+      <div className={styles.logoSmol}>
+        <img src="" className={styles.imgg}></img>
+      </div>
+      <div className={styles.text}>
+        <p className={styles.headline}>YourApp by YourAppOwner</p>
+        <p className={styles.subline}>wants to access your PersonalAppXAccount</p>
+      </div>
+    </div>
+  )
+}
+
+
+function Logos(props) {
+  return (
+      <div className={styles.Logos}>
+          <div className={styles.logoPack}>
+              <div className={styles.logo}>
+                  <img src={props.appLogo}></img>
+              </div>
+              <div className={styles.link}></div>
+              <div className={styles.logo}>
+                  <img src={props.accountLogo}></img>
+              </div>
+          </div>
+      </div>
+  )
+}
 
 function AccordionLabel({ headline, subline, image, perms }) {
   return (
