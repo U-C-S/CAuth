@@ -6,19 +6,20 @@ use std::{
 use axum::{
   extract::{Path, State},
   http::StatusCode,
-  response::IntoResponse,
+  response::{IntoResponse, Response},
   routing::{get, post},
   Json, Router,
 };
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
 
-use crate::models::{self, token::JwtPayloadForServManage, Service, SharedState};
+use crate::models::{self, token::JwtPayloadForServManage, IClient, Service, SharedState};
 
 pub fn service_routes(state: models::SharedState) -> Router<()> {
   Router::new()
-    .route("/get/:serv_name", get(get_service_info))
+    .route("/get/:entity_type/:serv_name", get(get_service_info))
     .route("/get/all_owned_services", get(get_all_owned_services))
+    .route("/get/all_owned_clients", get(get_all_owned_clients))
     .route("/get/all_services", get(get_all_services))
     .route("/add", post(add_service))
     .nest("/auth", service_manage_auth_routes())
@@ -30,6 +31,13 @@ pub struct ServicesListResponse {
   name: String,
   api: String,
   description: Option<String>,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ClientListResponse {
+  name: String,
+  description: Option<String>,
+  services_access: Vec<String>,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -78,26 +86,78 @@ async fn get_all_owned_services(
 }
 
 #[axum_macros::debug_handler]
+async fn get_all_owned_clients(
+  State(state): State<SharedState>,
+  claims: JwtPayloadForServManage,
+) -> impl IntoResponse {
+  let clients = state.read().await.clients.clone();
+
+  let x: Vec<_> = clients
+    .iter()
+    .filter(|(_, val)| val.owner == claims.user_name)
+    .map(|(key, val)| ClientListResponse {
+      name: key.clone(),
+      description: val.description.clone(),
+      services_access: val.services_access.clone(),
+    })
+    .collect();
+
+  Json(x)
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+enum UnionResponse<T, U, Err> {
+  App(T),
+  Serv(U),
+  Err(Err),
+}
+
+impl<T, U, Err> IntoResponse for UnionResponse<T, U, Err>
+where
+  T: IntoResponse,
+  U: IntoResponse,
+  Err: IntoResponse,
+{
+  fn into_response(self) -> Response {
+    match self {
+      UnionResponse::App(x) => x.into_response(),
+      UnionResponse::Serv(x) => x.into_response(),
+      UnionResponse::Err(x) => x.into_response(),
+    }
+  }
+}
+
+#[axum_macros::debug_handler]
 async fn get_service_info(
   State(state): State<SharedState>,
-  Path(serv_name): Path<String>,
+  Path((entity_type, serv_name)): Path<(String, String)>,
 ) -> impl IntoResponse {
-  let x = state.read().await.services.clone();
+  let x = state.read().await;
 
-  println!("{:?}", serv_name);
-
-  if let Some(val) = x.get(&serv_name) {
-    Ok(Json(val.clone()))
+  if entity_type == "service" {
+    if let Some(val) = x.services.get(&serv_name) {
+      UnionResponse::Serv(Json(val.clone()))
+    } else {
+      UnionResponse::Err(StatusCode::NOT_FOUND)
+    }
+  } else if entity_type == "application" {
+    if let Some(val) = x.clients.get(&serv_name) {
+      UnionResponse::App(Json(val.clone()))
+    } else {
+      UnionResponse::Err(StatusCode::NOT_FOUND)
+    }
   } else {
-    Err(StatusCode::NOT_FOUND)
+    UnionResponse::Err(StatusCode::NOT_FOUND)
   }
 }
 
 #[derive(serde::Deserialize)]
 struct ServiceReq {
   name: String,
-  api: String,
+  api: Option<String>,
   description: Option<String>,
+  service_access: Option<Vec<String>>,
+  is_client: bool,
 }
 
 #[derive(serde::Serialize)]
@@ -112,25 +172,34 @@ async fn add_service(
   claims: JwtPayloadForServManage,
   Json(payload): Json<ServiceReq>,
 ) -> impl IntoResponse {
-  let services = &mut state.write().await.services;
+  let services = &mut state.write().await;
 
-  let ins = services.insert(
-    payload.name,
-    Service {
-      api: payload.api,
-      description: payload.description,
-      user: claims.user_name,
-    },
-  );
+  //todo: check if entity already exists
 
-  if ins.is_none() {
-    Ok(Json(HashMap::from([
-      ("status", "success"),
-      ("message", "Service added"),
-    ])))
+  if payload.is_client {
+    services.clients.insert(
+      payload.name,
+      IClient {
+        owner: claims.user_name,
+        services_access: payload.service_access.unwrap_or_default(),
+        description: payload.description,
+      },
+    );
   } else {
-    Err(StatusCode::BAD_REQUEST)
+    services.services.insert(
+      payload.name,
+      Service {
+        api: payload.api.unwrap_or_default(),
+        description: payload.description,
+        user: claims.user_name,
+      },
+    );
   }
+
+  Json(HashMap::from([
+    ("status", "success"),
+    ("message", "Service added"),
+  ]))
 }
 
 #[derive(Debug, Serialize, Deserialize)]
