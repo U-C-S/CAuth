@@ -37,6 +37,12 @@ pub struct State {
   pub users: HashMap<String, User>,
 }
 
+// #[derive(Debug, Deserialize, Serialize)]
+pub enum EntityType {
+  Application, //can only access other services aka. Client
+  Service,     //can only provide services
+}
+
 pub type SharedState = Arc<RwLock<State>>;
 
 pub fn shared_state() -> State {

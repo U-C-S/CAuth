@@ -78,12 +78,6 @@ impl IntoResponse for AuthError {
   }
 }
 
-pub enum AccessEntityType {
-  Application,     //can only access other services
-  Service,         //can only provide services
-  ServiceAsClient, //can access other services and provide services
-}
-
 /*
 JWTs for Cl-AS-S Model
 - for app to access services API
