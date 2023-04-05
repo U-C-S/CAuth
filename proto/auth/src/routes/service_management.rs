@@ -28,13 +28,13 @@ pub fn service_routes(state: models::SharedState) -> Router<()> {
 pub struct ServicesListResponse {
   name: String,
   api: String,
-  description: String,
+  description: Option<String>,
 }
 
 #[axum_macros::debug_handler]
 async fn get_all_owned_services(
-  claims: JwtPayloadForServManage,
   State(state): State<SharedState>,
+  claims: JwtPayloadForServManage,
 ) -> impl IntoResponse {
   let services = state.read().await.services.clone();
 
@@ -49,16 +49,6 @@ async fn get_all_owned_services(
     .collect();
 
   Json(x)
-
-  // let mut owned_services = HashMap::new();
-
-  // for (key, val) in services {
-  //   if val.user == Claims.user_name {
-  //     owned_services.insert(key, val);
-  //   }
-  // }
-
-  // Ok(Json(owned_services))
 }
 
 #[axum_macros::debug_handler]
@@ -81,8 +71,7 @@ async fn get_service_info(
 struct ServiceReq {
   name: String,
   api: String,
-  description: String,
-  user: String,
+  description: Option<String>,
 }
 
 #[derive(serde::Serialize)]
@@ -94,6 +83,7 @@ struct GenericResponse {
 #[axum_macros::debug_handler]
 async fn add_service(
   State(state): State<SharedState>,
+  claims: JwtPayloadForServManage,
   Json(payload): Json<ServiceReq>,
 ) -> impl IntoResponse {
   let services = &mut state.write().await.services;
@@ -103,7 +93,7 @@ async fn add_service(
     Service {
       api: payload.api,
       description: payload.description,
-      user: payload.user,
+      user: claims.user_name,
     },
   );
 

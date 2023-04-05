@@ -6,7 +6,7 @@ use tokio::sync::RwLock;
 
 #[derive(Debug, serde::Deserialize, serde::Serialize, Clone)]
 pub struct Service {
-  pub description: String,
+  pub description: Option<String>,
   pub api: String,
   pub user: String,
 }
@@ -33,7 +33,7 @@ pub fn shared_state() -> State {
       "TimeService".to_string(),
       Service {
         api: "TimeSerivce".to_string(),
-        description: "TimeSerivce".to_string(),
+        description: Some("TimeSerivce".to_string()),
         user: "lol".to_string(),
       },
     )]),
