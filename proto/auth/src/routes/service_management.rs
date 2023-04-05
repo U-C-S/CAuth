@@ -1,4 +1,7 @@
-use std::collections::HashMap;
+use std::{
+  collections::HashMap,
+  time::{SystemTime, UNIX_EPOCH},
+};
 
 use axum::{
   extract::{Path, State},
@@ -10,11 +13,7 @@ use axum::{
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
 
-use crate::models::{
-  self,
-  token::{JwtPayload, JwtPayloadForServManage},
-  Service, SharedState,
-};
+use crate::models::{self, token::JwtPayloadForServManage, Service, SharedState};
 
 pub fn service_routes(state: models::SharedState) -> Router<()> {
   Router::new()
@@ -34,7 +33,7 @@ pub struct ServicesListResponse {
 
 #[axum_macros::debug_handler]
 async fn get_all_owned_services(
-  claims: JwtPayload,
+  claims: JwtPayloadForServManage,
   State(state): State<SharedState>,
 ) -> impl IntoResponse {
   let services = state.read().await.services.clone();
@@ -138,7 +137,11 @@ fn service_manage_auth_routes() -> Router<SharedState> {
           &Header::default(),
           &JwtPayloadForServManage {
             user_name: creds.user_name,
-            exp: 50000,
+            exp: SystemTime::now()
+              .duration_since(UNIX_EPOCH)
+              .unwrap()
+              .as_secs()
+              + 50000,
           },
           &EncodingKey::from_secret("secret".as_ref()),
         );

@@ -20,11 +20,11 @@ pub struct JwtPayload {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JwtPayloadForServManage {
   pub user_name: String,
-  pub exp: usize,
+  pub exp: u64,
 }
 
 #[async_trait]
-impl<S> FromRequestParts<S> for JwtPayload
+impl<S> FromRequestParts<S> for JwtPayloadForServManage
 where
   S: Send + Sync,
 {
@@ -36,14 +36,25 @@ where
       .await
       .map_err(|_| AuthError::InvalidToken)?;
 
-    let token_data = decode::<Self>(
-      bearer.token(),
-      &DecodingKey::from_secret("lol".as_ref()),
-      &Validation::default(),
-    )
-    .map_err(|_| AuthError::InvalidToken)?;
+    // println!("{}", bearer.token());
 
-    Ok(token_data.claims)
+    let token_data = decode::<JwtPayloadForServManage>(
+      bearer.token(),
+      &DecodingKey::from_secret("secret".as_ref()),
+      &Validation::default(),
+    );
+
+    // if token_data.is_err() {
+    //   println!("Error in token");
+    // }
+
+    match token_data {
+      Ok(x) => Ok(x.claims),
+      Err(e) => {
+        println!("Error in token: {}", e.to_string());
+        Err(AuthError::InvalidToken)
+      }
+    }
   }
 }
 
