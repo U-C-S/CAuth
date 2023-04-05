@@ -19,6 +19,7 @@ pub fn service_routes(state: models::SharedState) -> Router<()> {
   Router::new()
     .route("/get/:serv_name", get(get_service_info))
     .route("/get/all_owned_services", get(get_all_owned_services))
+    .route("/get/all_services", get(get_all_services))
     .route("/add", post(add_service))
     .nest("/auth", service_manage_auth_routes())
     .with_state(state)
@@ -29,6 +30,31 @@ pub struct ServicesListResponse {
   name: String,
   api: String,
   description: Option<String>,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ServicesListResponseWithUsers {
+  name: String,
+  api: String,
+  description: Option<String>,
+  owner: String,
+}
+
+#[axum_macros::debug_handler]
+async fn get_all_services(State(state): State<SharedState>) -> impl IntoResponse {
+  let services = state.read().await.services.clone();
+
+  let x: Vec<_> = services
+    .iter()
+    .map(|(key, val)| ServicesListResponseWithUsers {
+      name: key.clone(),
+      api: val.api.clone(),
+      description: val.description.clone(),
+      owner: val.user.clone(),
+    })
+    .collect();
+
+  Json(x)
 }
 
 #[axum_macros::debug_handler]
