@@ -12,10 +12,10 @@ use crate::models::shared_state;
 async fn main() {
   let shared_state = Arc::new(RwLock::new(shared_state()));
 
-  let app = Router::new().route("/", get(|| async { "Echo!" })).nest(
-    "/manage",
-    routes::management::service_routes(shared_state),
-  );
+  let app = Router::new()
+    .route("/", get(|| async { "Echo!" }))
+    .nest("/manage", routes::management::service_routes())
+    .with_state(shared_state);
 
   let addr = SocketAddr::from(([127, 0, 0, 1], 3721));
   println!("Listening on http://{}", addr);
