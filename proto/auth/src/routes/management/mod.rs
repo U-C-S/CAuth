@@ -2,16 +2,14 @@ mod add;
 mod auth;
 mod get;
 
-use std::sync::Arc;
-
 use axum::{
   routing::{get, post},
   Router,
 };
 
-use crate::models;
+use crate::state::SharedState;
 
-pub fn service_routes() -> Router<Arc<tokio::sync::RwLock<models::State>>> {
+pub fn service_routes() -> Router<SharedState> {
   Router::new()
     .route("/get/:entity_type/:serv_name", get(get::get_service_info))
     .route("/get/all_owned_services", get(get::get_all_owned_services))

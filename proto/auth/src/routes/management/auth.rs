@@ -4,7 +4,7 @@ use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::ge
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
 
-use crate::models::{token::JwtPayloadForServManage, SharedState};
+use crate::{models::token::JwtPayloadForServManage, state::SharedState};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct ServiceAuthReq {

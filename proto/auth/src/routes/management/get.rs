@@ -6,7 +6,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::models::{token::JwtPayloadForServManage, SharedState};
+use crate::{models::token::JwtPayloadForServManage, state::SharedState};
 
 #[derive(Deserialize, Serialize)]
 pub struct ServicesListResponse {
