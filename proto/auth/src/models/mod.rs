@@ -1,4 +1,5 @@
 pub mod token;
+pub mod auth_error;
 
 use serde::{Deserialize, Serialize};
 
@@ -33,3 +34,5 @@ pub enum EntityType {
   Application, //can only access other services aka. Client
   Service,     //can only provide services
 }
+
+//test
