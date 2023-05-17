@@ -13,6 +13,7 @@ pub struct IClient {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Service {
   // pub name: String,
+  // pub max_token_expire_time: u64,
   pub description: Option<String>,
   pub api: String,  // API access endpoint URL
   pub user: String, //foriegn key to owner user
