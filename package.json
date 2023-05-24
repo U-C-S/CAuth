@@ -1,0 +1,10 @@
+{
+  "name": "cauth",
+  "workspaces": [
+    "./proto/auth-management"
+  ],
+  "prettier": {
+    "bracketSameLine": true,
+    "printWidth": 100
+  }
+}
