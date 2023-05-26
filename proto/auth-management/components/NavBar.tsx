@@ -1,8 +1,6 @@
 import {
   Navbar,
   Group,
-  Code,
-  ScrollArea,
   createStyles,
   rem,
   UnstyledButton,
@@ -13,27 +11,13 @@ import {
   ThemeIcon,
 } from "@mantine/core";
 import {
-  IconNotes,
-  IconCalendarStats,
   IconGauge,
-  IconPresentationAnalytics,
-  IconFileAnalytics,
-  IconAdjustments,
-  IconLock,
   IconChevronRight,
   IconKey,
   IconApps,
-  IconAppWindow,
   IconApi,
   IconApiApp,
 } from "@tabler/icons-react";
-
-interface UserButtonProps extends UnstyledButtonProps {
-  image: string;
-  name: string;
-  email: string;
-  icon?: React.ReactNode;
-}
 
 const mockdata = [
   { label: "Dashboard", icon: IconGauge },
@@ -113,7 +97,7 @@ interface LinksGroupProps {
   links?: { label: string; link: string }[];
 }
 
-export default function NavbarNested() {
+export function TheAppNavbar() {
   const { classes } = useStyles();
   const links = mockdata.map((item: LinksGroupProps) => {
     return (
