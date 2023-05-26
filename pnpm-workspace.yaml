@@ -1,2 +1,3 @@
 packages:
   - "proto/auth-management"
+  - "proto/database-service"

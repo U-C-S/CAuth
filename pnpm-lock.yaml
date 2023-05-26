@@ -50,6 +50,25 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4
 
+  proto/database-service:
+    dependencies:
+      uWebSockets.js:
+        specifier: github:uNetworking/uWebSockets.js#v20.25.0
+        version: github.com/uNetworking/uWebSockets.js/e6ecc2102d68d99dc35969b0898fbd201e0f252b
+    devDependencies:
+      '@types/node':
+        specifier: ^20.1.0
+        version: 20.1.0
+      prisma:
+        specifier: ^4.14.1
+        version: 4.14.1
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1(@types/node@20.1.0)(typescript@5.0.4)
+      typescript:
+        specifier: ^5.0.4
+        version: 5.0.4
+
 packages:
 
   /@babel/code-frame@7.21.4:
@@ -100,6 +119,13 @@ packages:
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
     dev: false
+
+  /@cspotcode/source-map-support@0.8.1:
+    resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.9
+    dev: true
 
   /@emotion/babel-plugin@11.11.0:
     resolution: {integrity: sha512-m4HEDZleaaCH+XgDDsPF15Ht6wTLsgDTeR3WYj9Q/k76JtWhrJjcP4+/XlG8LGT/Rol9qUfOIztXeA84ATpqPQ==}
@@ -237,6 +263,22 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
       tabbable: 6.1.2
     dev: false
+
+  /@jridgewell/resolve-uri@3.1.1:
+    resolution: {integrity: sha512-dSYZh7HhCDtCKm4QakX0xFpsRDqjjtZf/kjI/v3T3Nwt5r8/qz/M19F9ySyOqU94SXBmeG9ttTul+YnR4LOxFA==}
+    engines: {node: '>=6.0.0'}
+    dev: true
+
+  /@jridgewell/sourcemap-codec@1.4.15:
+    resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
+    dev: true
+
+  /@jridgewell/trace-mapping@0.3.9:
+    resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
+    dependencies:
+      '@jridgewell/resolve-uri': 3.1.1
+      '@jridgewell/sourcemap-codec': 1.4.15
+    dev: true
 
   /@mantine/core@6.0.10(@emotion/react@11.11.0)(@mantine/hooks@6.0.10)(@types/react@18.2.6)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-Q8HdRTBkQDs6LEtklpYm6efz2WaV6T5rvgjUOfXq0z44G/XYM+P1B1BSFnHvUDkeWYLcGkK6aPI5Uxc0GEN04w==}
@@ -417,6 +459,11 @@ packages:
     dev: false
     optional: true
 
+  /@prisma/engines@4.14.1:
+    resolution: {integrity: sha512-APqFddPVHYmWNKqc+5J5SqrLFfOghKOLZxobmguDUacxOwdEutLsbXPVhNnpFDmuQWQFbXmrTTPoRrrF6B1MWA==}
+    requiresBuild: true
+    dev: true
+
   /@radix-ui/number@1.0.0:
     resolution: {integrity: sha512-Ofwh/1HX69ZfJRiRBMTy7rgjAzHmwe4kW9C9Y99HTRUcYLUuVT0KESFj15rPjRgKJs20GPq8Bm5aEDJ8DuA3vA==}
     dependencies:
@@ -549,6 +596,22 @@ packages:
     resolution: {integrity: sha512-BsUEJoqREs8bqcrf5HfJBq6/rDvsRI3h+T+0X1o7i8LBHonsH0iAngcyL0I82YKoSy9NiVDvM3LV63zDP0nPYQ==}
     dev: false
 
+  /@tsconfig/node10@1.0.9:
+    resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
+    dev: true
+
+  /@tsconfig/node12@1.0.11:
+    resolution: {integrity: sha512-cqefuRsh12pWyGsIoBKJA9luFu3mRxCA+ORZvA4ktLSzIuCUtWVxGIuXigEwO5/ywWFMZ2QEGKWvkZG1zDMTag==}
+    dev: true
+
+  /@tsconfig/node14@1.0.3:
+    resolution: {integrity: sha512-ysT8mhdixWK6Hw3i1V2AeRqZ5WfXg1G43mqoYlM2nc6388Fq5jcXyr5mRsqViLx/GJYdoL0bfXD8nmF+Zn/Iow==}
+    dev: true
+
+  /@tsconfig/node16@1.0.4:
+    resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
+    dev: true
+
   /@types/node@20.1.0:
     resolution: {integrity: sha512-O+z53uwx64xY7D6roOi4+jApDGFg0qn6WHcxe5QeqjMaTezBO/mxdfFXIVAVVyNWKx84OmPB3L8kbVYOTeN34A==}
     dev: true
@@ -576,12 +639,27 @@ packages:
   /@types/scheduler@0.16.3:
     resolution: {integrity: sha512-5cJ8CB4yAx7BH1oMvdU0Jh9lrEXyPkar6F9G/ERswkCuvP4KQZfZkSjcMbAICCpQTN4OuZn8tz0HiKv9TGZgrQ==}
 
+  /acorn-walk@8.2.0:
+    resolution: {integrity: sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==}
+    engines: {node: '>=0.4.0'}
+    dev: true
+
+  /acorn@8.8.2:
+    resolution: {integrity: sha512-xjIYgE8HBrkpd/sJqOGNspf8uHG+NOHGOw6a/Urj8taM2EXfdNAH2oFcPeIFfsv3+kz/mJrS5VuMqbNLjCa2vw==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+    dev: true
+
   /ansi-styles@3.2.1:
     resolution: {integrity: sha512-VT0ZI6kZRdTh8YyJw3SMbYm/u+NqfsAxEpWO0Pf9sq8/e94WxxOpPKx9FR1FlyCtOVDNOQ+8ntlqFxiRc+r5qA==}
     engines: {node: '>=4'}
     dependencies:
       color-convert: 1.9.3
     dev: false
+
+  /arg@4.1.3:
+    resolution: {integrity: sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA==}
+    dev: true
 
   /aria-hidden@1.2.3:
     resolution: {integrity: sha512-xcLxITLe2HYa1cnYnwCjkOO1PqUHQpozB8x9AR0OgWN2woOBi5kSDVxKfd0b7sb1hw5qFeJhXm9H1nu3xSfLeQ==}
@@ -666,6 +744,10 @@ packages:
       yaml: 1.10.2
     dev: false
 
+  /create-require@1.1.1:
+    resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
+    dev: true
+
   /csstype@3.0.9:
     resolution: {integrity: sha512-rpw6JPxK6Rfg1zLOYCSwle2GFOOsnjmDYDaBwEcwoOg4qlsIVCN789VkBZDJAGi4T07gI4YSutR43t9Zz4Lzuw==}
     dev: false
@@ -676,6 +758,11 @@ packages:
   /detect-node-es@1.1.0:
     resolution: {integrity: sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==}
     dev: false
+
+  /diff@4.0.2:
+    resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
+    engines: {node: '>=0.3.1'}
+    dev: true
 
   /dom-serializer@1.4.1:
     resolution: {integrity: sha512-VHwB3KfrcOOkelEG2ZOfxqLZdfkil8PtJi4P8N2MMXucZq2yLp75ClViUlOVwyoHEDjYU433Aq+5zWP61+RGag==}
@@ -873,6 +960,10 @@ packages:
       js-tokens: 4.0.0
     dev: false
 
+  /make-error@1.3.6:
+    resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
+    dev: true
+
   /minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
     dev: false
@@ -982,6 +1073,15 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: false
+
+  /prisma@4.14.1:
+    resolution: {integrity: sha512-z6hxzTMYqT9SIKlzD08dhzsLUpxjFKKsLpp5/kBDnSqiOjtUyyl/dC5tzxLcOa3jkEHQ8+RpB/fE3w8bgNP51g==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      '@prisma/engines': 4.14.1
+    dev: true
 
   /process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
@@ -1225,6 +1325,37 @@ packages:
     engines: {node: '>=4'}
     dev: false
 
+  /ts-node@10.9.1(@types/node@20.1.0)(typescript@5.0.4):
+    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.9
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 20.1.0
+      acorn: 8.8.2
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 5.0.4
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    dev: true
+
   /tslib@2.5.2:
     resolution: {integrity: sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==}
     dev: false
@@ -1305,6 +1436,10 @@ packages:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: false
 
+  /v8-compile-cache-lib@3.0.1:
+    resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
+    dev: true
+
   /xtend@2.1.2:
     resolution: {integrity: sha512-vMNKzr2rHP9Dp/e1NQFnLQlwlhp9L/LfvnsVdHxN1f+uggyVI3i08uD14GPvCToPkdsRfyPqIyYGmIk58V98ZQ==}
     engines: {node: '>=0.4'}
@@ -1317,6 +1452,17 @@ packages:
     engines: {node: '>= 6'}
     dev: false
 
+  /yn@3.1.1:
+    resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
+    engines: {node: '>=6'}
+    dev: true
+
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+    dev: false
+
+  github.com/uNetworking/uWebSockets.js/e6ecc2102d68d99dc35969b0898fbd201e0f252b:
+    resolution: {tarball: https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/e6ecc2102d68d99dc35969b0898fbd201e0f252b}
+    name: uWebSockets.js
+    version: 20.25.0
     dev: false
