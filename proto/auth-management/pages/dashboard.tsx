@@ -1,10 +1,9 @@
-import { AppShell, Text } from "@mantine/core";
-import { TheAppNavbar } from "../components/NavBar";
+import { Layout } from "../components/common/Layout";
 
 export default function Page() {
   return (
-    <AppShell navbar={<TheAppNavbar />}>
-      <Text>Dashboard</Text>
-    </AppShell>
+    <Layout>
+      <h1>Dashboard</h1>
+    </Layout>
   );
 }

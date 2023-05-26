@@ -1,10 +1,10 @@
 import {
+  AppShell,
   Navbar,
   Group,
   createStyles,
   rem,
   UnstyledButton,
-  UnstyledButtonProps,
   Avatar,
   Text,
   Box,
@@ -18,6 +18,10 @@ import {
   IconApi,
   IconApiApp,
 } from "@tabler/icons-react";
+
+interface IComponentProps {
+  children: React.ReactNode;
+}
 
 const mockdata = [
   { label: "Dashboard", icon: IconGauge },
@@ -147,3 +151,9 @@ export function TheAppNavbar() {
     </Navbar>
   );
 }
+
+function Layout({ children }: IComponentProps) {
+  return <AppShell navbar={<TheAppNavbar />}>{children}</AppShell>;
+}
+
+export { Layout };
