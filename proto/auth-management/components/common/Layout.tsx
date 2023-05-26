@@ -10,39 +10,14 @@ import {
   Box,
   ThemeIcon,
 } from "@mantine/core";
-import {
-  IconGauge,
-  IconChevronRight,
-  IconKey,
-  IconApps,
-  IconApi,
-  IconApiApp,
-} from "@tabler/icons-react";
+import { IconChevronRight } from "@tabler/icons-react";
+import PAGE_DATA from "../../data/page_data";
+import Router from "next/router";
+import Link from "next/link";
 
 interface IComponentProps {
   children: React.ReactNode;
 }
-
-const mockdata = [
-  { label: "Dashboard", icon: IconGauge },
-  {
-    label: "Browse",
-    icon: IconApps,
-    initiallyOpened: true,
-  },
-  {
-    label: "Your Services",
-    icon: IconApi,
-  },
-  {
-    label: "Your Applications",
-    icon: IconApiApp,
-  },
-  {
-    label: "Access Keys",
-    icon: IconKey,
-  },
-];
 
 const useStyles = createStyles((theme) => ({
   user: {
@@ -94,25 +69,21 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface LinksGroupProps {
-  icon: React.FC<any>;
-  label: string;
-  initiallyOpened?: boolean;
-  links?: { label: string; link: string }[];
-}
-
 export function TheAppNavbar() {
   const { classes } = useStyles();
-  const links = mockdata.map((item: LinksGroupProps) => {
+
+  const links = PAGE_DATA.map((item) => {
     return (
-      <UnstyledButton className={classes.control}>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <ThemeIcon variant="light" size={30}>
-            <item.icon size="1rem" />
-          </ThemeIcon>
-          <Box ml="md">{item.label}</Box>
-        </Box>
-      </UnstyledButton>
+      <Link href={item.link} key={item.label} style={{ textDecoration: "none" }}>
+        <UnstyledButton className={classes.control}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <ThemeIcon variant="light" size={30}>
+              <item.icon size="1rem" />
+            </ThemeIcon>
+            <Box ml="md">{item.label}</Box>
+          </Box>
+        </UnstyledButton>
+      </Link>
     );
   });
 
