@@ -3,6 +3,9 @@ import fastify, { FastifyInstance, FastifyServerOptions } from "fastify";
 
 import prismaPlugin from "./plugins/prisma";
 import jwtPlugin from "./plugins/jwt-auth";
+import { authRoutes } from "./routes/auth";
+import { miscRoutes } from "./routes/misc";
+
 export default async function appFactory(fastify: FastifyInstance) {
 	const app = fastify;
 
@@ -12,6 +15,9 @@ export default async function appFactory(fastify: FastifyInstance) {
 		methods: ["GET", "POST", "PUT", "DELETE"],
 		origin: "*",
 	});
+
+	app.register(authRoutes, { prefix: "/auth" });
+	app.register(miscRoutes, { prefix: "/api/misc" });
 
 	return app;
 }

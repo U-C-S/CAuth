@@ -1,13 +1,13 @@
 import "@fastify/jwt";
 
 export type jwtUserPayload = {
-	id: number;
-	username: string;
+  id: number;
+  user_name: string;
 };
 
 declare module "@fastify/jwt" {
-	interface FastifyJWT {
-		payload: jwtUserPayload;
-		user: jwtUserPayload;
-	}
+  interface FastifyJWT {
+    payload: jwtUserPayload;
+    user: jwtUserPayload;
+  }
 }
