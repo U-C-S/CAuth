@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id            Int            @id @default(autoincrement())
+  user_name     String         @unique
+  password      String
+  UserDetails   UserDetails?
+  ServicesOwned ServiceTable[]
+  AppTable      AppTable[]
+}
+
+model UserDetails {
+  id      Int    @id @default(autoincrement())
+  email   String @unique
+  name    String
+  User    Users  @relation(fields: [usersId], references: [id])
+  usersId Int    @unique
+}
+
+model ServiceTable {
+  id                 Int                  @id @default(autoincrement())
+  service_name       String               @unique
+  description        String
+  api_base_uri       String
+  provider           Users                @relation(fields: [providerId], references: [id])
+  providerId         Int
+  ServicesUsedByApps ServicesUsedByApps[]
+}
+
+model AppTable {
+  id          Int    @id @default(autoincrement())
+  app_name    String @unique
+  description String
+  owner       Users  @relation(fields: [ownerId], references: [id])
+  ownerId     Int
+
+  ServicesUsedByApps ServicesUsedByApps[]
+}
+
+model ServicesUsedByApps {
+  id             Int          @id @default(autoincrement())
+  app            AppTable     @relation(fields: [appTableId], references: [id])
+  appTableId     Int
+  service        ServiceTable @relation(fields: [serviceTableId], references: [id])
+  serviceTableId Int
+}
