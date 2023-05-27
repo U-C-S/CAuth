@@ -1,4 +1,4 @@
-let API_URL = "http://localhost:3721";
+let API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function getAllServices() {
   let req = await fetch(API_URL + "/manage/get/all_services");

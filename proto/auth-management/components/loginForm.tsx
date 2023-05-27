@@ -8,14 +8,12 @@ import {
   Group,
   PaperProps,
   Button,
-  Checkbox,
   Anchor,
-  Divider,
-  Image,
   Stack,
 } from "@mantine/core";
 import { AuthContext } from "./contexts/authContext";
 import Router from "next/router";
+import { LoginReq } from "../data/postUserAuthReq";
 
 export function LoginForm(props: PaperProps) {
   const [formType, toggleFormType] = useToggle(["login", "register"]);
@@ -30,27 +28,15 @@ export function LoginForm(props: PaperProps) {
   });
 
   const submitEvent = async (values: typeof form.values) => {
-    let fetchOpts = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: values.email,
-        name: values.name,
-        password: values.password,
-      }),
-    };
-
-    let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${formType}`, fetchOpts);
-    let resData = await res.json();
+    let resData = await LoginReq(values.name, values.password);
 
     console.log(resData);
-    if (resData.success) {
+    if (resData) {
       localStorage.setItem("token", resData.token);
-      localStorage.setItem("userName", resData.username);
-      setAuth({ userName: resData.username, token: resData.token });
-      Router.push(`/home`);
+      localStorage.setItem("user_name", resData.user_name);
+      setAuth({ userName: resData.user_name, token: resData.token });
+
+      Router.push(`/dashboard`);
     }
   };
 

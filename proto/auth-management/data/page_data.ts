@@ -17,7 +17,7 @@ const PAGE_DATA = [
     link: "/dashboard/services",
   },
   {
-    label: "Your Applications",
+    label: "Your Apps",
     icon: IconApiApp,
     link: "/dashboard/applications",
   },
