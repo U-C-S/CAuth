@@ -1,5 +1,5 @@
 import { PrismaClient, Users } from "@prisma/client";
-import { IQuery } from "../types/IQuery";
+import { SResponse } from "../types/IQuery";
 import bcrypt from "@node-rs/bcrypt";
 
 const prisma = new PrismaClient();
@@ -7,10 +7,7 @@ const prisma = new PrismaClient();
 /**
  * The passwords should be hashed before pushing it into this
  */
-export async function createProfile({ name, password, email }: any): IQuery<{
-  id: number;
-  user_name: string;
-}> {
+export async function createProfile({ name, password, email }: any) {
   try {
     let x = await prisma.users.create({
       data: {

@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { SResponse } from "../types/IQuery";
 import { AppTable, ServiceTable } from "@prisma/client";
+import { jwtUserPayload } from "../types/jwt";
 
 enum EntityType {
   SERVICE = "service",
@@ -124,7 +125,12 @@ export async function getRoutes(fastify: FastifyInstance) {
     });
   });
 
-  fastify.get("/add/:etype", { onRequest: [fastify.authenticate] }, async (request, reply) => {
+  fastify.post<{
+    Reply: SResponse<any>;
+    Params: {
+      etype: string;
+    };
+  }>("/add/:etype", { onRequest: [fastify.authenticate] }, async (request, reply) => {
     const { etype } = request.params;
     const { user_name } = request.user;
     const data = request.body as any;

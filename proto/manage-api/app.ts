@@ -19,7 +19,7 @@ export default async function appFactory(fastify: FastifyInstance) {
 
   app.register(getRoutes, { prefix: "/manage" });
   app.register(authRoutes, { prefix: "/auth" });
-  app.register(miscRoutes, { prefix: "/api/misc" });
+  app.register(miscRoutes, { prefix: "/" });
 
   return app;
 }
