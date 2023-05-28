@@ -16,7 +16,7 @@ async fn main() {
   let app = Router::new()
     .route("/", get(|| async { "Echo!" }))
     .nest("/manage", routes::management::service_routes())
-    .layer(CorsLayer::new().allow_origin(Any))
+    .layer(CorsLayer::new().allow_origin(Any).allow_headers(Any))
     .with_state(shared_state);
 
   let addr = SocketAddr::from(([127, 0, 0, 1], 3721));
