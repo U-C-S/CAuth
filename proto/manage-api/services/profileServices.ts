@@ -14,7 +14,6 @@ export async function createProfile({ user_name, password, email }: any) {
         user_name,
         password,
         UserDetails: {
-          
           create: {
             email,
             name: user_name,
@@ -46,6 +45,7 @@ export async function getProfile(user_name: string) {
       select: {
         ServicesOwned: true,
         AppsOwned: true,
+        UserDetails: true,
         user_name: true,
         id: true,
       },

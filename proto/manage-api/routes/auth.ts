@@ -46,7 +46,21 @@ export async function authRoutes(fastify: FastifyInstance) {
         },
       });
     }
-    return reply.code(400).send({
+    return reply.code(500).send({
+      success: false,
+      message: profile.message,
+    });
+  });
+
+  fastify.get("/whoami", { onRequest: [fastify.authenticate] }, async (request, reply) => {
+    let profile = await getProfile(request.user.user_name);
+    if (profile.success) {
+      return reply.send({
+        success: true,
+        data: profile.data,
+      });
+    }
+    return reply.code(500).send({
       success: false,
       message: profile.message,
     });
