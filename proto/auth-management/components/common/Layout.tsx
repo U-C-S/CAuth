@@ -10,10 +10,12 @@ import {
   Box,
   ThemeIcon,
 } from "@mantine/core";
-import { IconChevronRight } from "@tabler/icons-react";
+import { IconChevronRight, IconUser } from "@tabler/icons-react";
 import PAGE_DATA from "../../data/page_data";
 import Router from "next/router";
 import Link from "next/link";
+import { useContext } from "react";
+import { AuthContext } from "../contexts/authContext";
 
 interface IComponentProps {
   children: React.ReactNode;
@@ -71,6 +73,7 @@ const useStyles = createStyles((theme) => ({
 
 export function TheAppNavbar() {
   const { classes } = useStyles();
+  const { authData } = useContext(AuthContext);
 
   const links = PAGE_DATA.map((item) => {
     return (
@@ -97,23 +100,12 @@ export function TheAppNavbar() {
 
       <Navbar.Section className={classes.footer}>
         <UnstyledButton className={classes.user}>
-          <Group>
-            <Avatar
-              src={
-                "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
-              }
-              radius="xl"
-            />
+          <Group align="center" position="apart">
+            <Group>
+              <IconUser size="1.5rem" />
 
-            <div style={{ flex: 1 }}>
-              <Text size="sm" weight={500}>
-                Random Idiot
-              </Text>
-
-              <Text color="dimmed" size="xs">
-                anullpointer@yahoo.com
-              </Text>
-            </div>
+              <Text size="xl">{authData?.user_name}</Text>
+            </Group>
 
             <IconChevronRight size="0.9rem" stroke={1.5} />
           </Group>

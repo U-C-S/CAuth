@@ -7,32 +7,32 @@ type authData = {
 
 type IAuthContext = {
   authData: authData;
-  setAuth: React.Dispatch<React.SetStateAction<authData>>;
+  // setAuth: React.Dispatch<React.SetStateAction<authData>>;
 };
 
 const defaultAuthContext: IAuthContext = {
   authData: null,
-  setAuth: () => {},
+  // setAuth: () => {},
 };
 
 export const AuthContext = createContext<IAuthContext>(defaultAuthContext);
 
-export function AuthContextProvider({ children }: { children: React.ReactNode }) {
-  const [authInfo, setAuthInfo] = useState<authData>(null);
+export function ProtectedPage({ children }: { children: React.ReactNode }) {
+  const [authData, setAuthData] = useState<authData>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const user_name = localStorage.getItem("userName");
+    const user_name = localStorage.getItem("user_name");
     if (token && user_name) {
-      setAuthInfo({ user_name, token });
+      setAuthData({ user_name, token });
     }
   }, []);
+  // console.log(authData);
 
   return (
     <AuthContext.Provider
       value={{
-        authData: authInfo,
-        setAuth: setAuthInfo,
+        authData,
       }}>
       {children}
     </AuthContext.Provider>

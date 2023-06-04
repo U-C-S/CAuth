@@ -1,9 +1,12 @@
 import { Layout } from "../../components/common/Layout";
+import { ProtectedPage } from "../../components/contexts/authContext";
 
 export default function Page() {
   return (
-    <Layout>
-      <h1>Dashboard</h1>
-    </Layout>
+    <ProtectedPage>
+      <Layout>
+        <h1>Dashboard</h1>
+      </Layout>
+    </ProtectedPage>
   );
 }

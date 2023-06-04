@@ -17,7 +17,7 @@ import { LoginReq, RegisterReq } from "../data/postUserAuthReq";
 
 export function LoginForm(props: PaperProps) {
   const [formType, toggleFormType] = useToggle(["login", "register"]);
-  const { setAuth } = useContext(AuthContext);
+  // const { setAuth } = useContext(AuthContext);
 
   const form = useForm({
     initialValues: {
@@ -35,7 +35,7 @@ export function LoginForm(props: PaperProps) {
       let { token, user_name } = resData.data;
       localStorage.setItem("token", token as string);
       localStorage.setItem("user_name", user_name as string);
-      setAuth({ user_name, token });
+      // setAuth({ user_name, token });
 
       Router.push(`/dashboard`);
     }
