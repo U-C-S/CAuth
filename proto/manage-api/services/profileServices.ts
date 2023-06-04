@@ -7,16 +7,17 @@ const prisma = new PrismaClient();
 /**
  * The passwords should be hashed before pushing it into this
  */
-export async function createProfile({ name, password, email }: any) {
+export async function createProfile({ user_name, password, email }: any) {
   try {
     let x = await prisma.users.create({
       data: {
-        user_name: name,
+        user_name,
         password,
         UserDetails: {
+          
           create: {
             email,
-            name,
+            name: user_name,
           },
         },
       },
@@ -38,10 +39,10 @@ export async function createProfile({ name, password, email }: any) {
   }
 }
 
-export async function getProfile(name: string) {
+export async function getProfile(user_name: string) {
   try {
     let x = await prisma.users.findUniqueOrThrow({
-      where: { user_name: name },
+      where: { user_name },
       select: {
         ServicesOwned: true,
         AppsOwned: true,
@@ -62,9 +63,9 @@ export async function getProfile(name: string) {
   }
 }
 
-export async function checkUserPassword(name: any, password: any) {
+export async function checkUserPassword(user_name: string, password: any) {
   let x = await prisma.users.findUnique({
-    where: { user_name: name },
+    where: { user_name },
     select: {
       id: true,
       user_name: true,

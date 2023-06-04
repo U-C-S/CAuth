@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 
 type authData = {
-  userName: string;
+  user_name: string;
   token: string;
 } | null;
 
@@ -22,9 +22,9 @@ export function AuthContextProvider({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const userName = localStorage.getItem("userName");
-    if (token && userName) {
-      setAuthInfo({ userName, token });
+    const user_name = localStorage.getItem("userName");
+    if (token && user_name) {
+      setAuthInfo({ user_name, token });
     }
   }, []);
 

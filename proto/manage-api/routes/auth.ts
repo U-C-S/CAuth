@@ -7,9 +7,9 @@ export async function authRoutes(fastify: FastifyInstance) {
   let { prisma } = fastify;
 
   fastify.post("/login", async (request, reply) => {
-    const { name, password } = request.body as any;
+    const { user_name, password } = request.body as any;
 
-    let result = await checkUserPassword(name, password);
+    let result = await checkUserPassword(user_name, password);
     // fastify.log.info(result);
     if (result.success) {
       return reply.send({
@@ -17,9 +17,9 @@ export async function authRoutes(fastify: FastifyInstance) {
         data: {
           token: await reply.jwtSign({
             id: result?.data?.id as number,
-            user_name: name,
+            user_name: user_name,
           }),
-          username: name,
+          user_name,
         },
       });
     }
@@ -28,10 +28,10 @@ export async function authRoutes(fastify: FastifyInstance) {
   });
 
   fastify.post("/register", async (request, reply) => {
-    const { name, password, email } = request.body as any;
+    const { user_name, password, email } = request.body as any;
 
     let hashedpassword = await bcrypt.hash(password, 10);
-    let profile = await createProfile({ name, password: hashedpassword, email });
+    let profile = await createProfile({ user_name, password: hashedpassword, email });
 
     if (profile.success) {
       return reply.send({
@@ -40,15 +40,15 @@ export async function authRoutes(fastify: FastifyInstance) {
         data: {
           token: await reply.jwtSign({
             id: profile.data?.id as number,
-            user_name: name,
+            user_name: user_name,
           }),
-          username: name,
+          user_name,
         },
       });
     }
     return reply.code(400).send({
       success: false,
-      message: "Invalid credentials",
+      message: profile.message,
     });
   });
 }

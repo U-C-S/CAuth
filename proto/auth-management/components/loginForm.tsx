@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { AuthContext } from "./contexts/authContext";
 import Router from "next/router";
-import { LoginReq } from "../data/postUserAuthReq";
+import { LoginReq, RegisterReq } from "../data/postUserAuthReq";
 
 export function LoginForm(props: PaperProps) {
   const [formType, toggleFormType] = useToggle(["login", "register"]);
@@ -22,19 +22,20 @@ export function LoginForm(props: PaperProps) {
   const form = useForm({
     initialValues: {
       email: "",
-      name: "",
+      user_name: "",
       password: "",
     },
   });
 
   const submitEvent = async (values: typeof form.values) => {
-    let resData = await LoginReq(values.name, values.password);
+    let resData = formType === "register" ? await RegisterReq(values) : await LoginReq(values);
 
     console.log(resData);
-    if (resData) {
-      localStorage.setItem("token", resData.token);
-      localStorage.setItem("user_name", resData.user_name);
-      setAuth({ userName: resData.user_name, token: resData.token });
+    if (resData?.success) {
+      let { token, user_name } = resData.data;
+      localStorage.setItem("token", token as string);
+      localStorage.setItem("user_name", user_name as string);
+      setAuth({ user_name, token });
 
       Router.push(`/dashboard`);
     }
@@ -57,10 +58,10 @@ export function LoginForm(props: PaperProps) {
 
           <TextInput
             required
-            label="Name"
-            placeholder="Your name"
-            value={form.values.name}
-            onChange={(event) => form.setFieldValue("name", event.currentTarget.value)}
+            label="User Name"
+            placeholder="Your user name"
+            value={form.values.user_name}
+            onChange={(event) => form.setFieldValue("user_name", event.currentTarget.value)}
           />
 
           <PasswordInput
