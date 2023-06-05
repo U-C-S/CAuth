@@ -1,3 +1,7 @@
 packages:
   - "proto/auth-management"
   - "proto/manage-api"
+  - "samples/info_app"
+  - "samples/unified_services"
+  - "samples/Fiction-Logs/api"
+  - "samples/Fiction-Logs/web"

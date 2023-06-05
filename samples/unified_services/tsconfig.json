@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "target": "ES2022",
+    "sourceMap": false,
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": ["types/**/*", "**/*.ts"],
+  "exclude": ["dist", "test"]
+}
