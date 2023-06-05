@@ -1,20 +1,17 @@
-use bb8::Pool;
-use bb8_postgres::PostgresConnectionManager;
-use tokio_postgres::NoTls;
-
 // pub fn create_redis_instance() {
 //   todo!("create_redis_instance")
 // }
 
-pub type PgSqlPool = Pool<PostgresConnectionManager<NoTls>>;
+use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
-pub async fn create_postgres_instance() -> PgSqlPool {
-  let manager = PostgresConnectionManager::new_from_stringlike(
-    "host=localhost user=postgres password=3721`",
-    NoTls,
-  )
-  .unwrap();
-  let pool = Pool::builder().build(manager).await.unwrap();
+pub type PgPoolType = Pool<Postgres>;
 
-  pool
+pub async fn create_postgres_instance(db_url: &str) -> Result<Pool<Postgres>, sqlx::Error> {
+  let pool = PgPoolOptions::new()
+    .max_connections(3)
+    .connect(db_url)
+    .await
+    .expect("Failed to connect to Postgres");
+
+  Ok(pool)
 }
