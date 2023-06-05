@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { SResponse } from "../types/IQuery";
-import { AppTable, ServiceTable } from "@prisma/client";
+import { app_table, service_table } from "@prisma/client";
 import { jwtUserPayload } from "../types/jwt";
 
 enum EntityType {
@@ -9,7 +9,7 @@ enum EntityType {
 }
 
 interface IGetItem {
-  Reply: SResponse<ServiceTable | AppTable>;
+  Reply: SResponse<service_table | app_table>;
   Params: {
     etype: string;
     ename: string;
@@ -19,11 +19,11 @@ interface IGetItem {
 export async function getRoutes(fastify: FastifyInstance) {
   let { prisma } = fastify;
 
-  fastify.get<IGetItem>("/get/:etype/:ename", async (request, reply) => {
+  fastify.get<IGetItem>("/:etype/:ename", async (request, reply) => {
     const { etype, ename } = request.params;
 
     if (etype === EntityType.SERVICE) {
-      let x = await prisma.serviceTable.findUnique({
+      let x = await prisma.service_table.findUnique({
         where: {
           service_name: ename,
         },
@@ -41,7 +41,7 @@ export async function getRoutes(fastify: FastifyInstance) {
         data: x,
       });
     } else if (etype === EntityType.APP) {
-      let x = await prisma.appTable.findUnique({
+      let x = await prisma.app_table.findUnique({
         where: {
           app_name: ename,
         },
@@ -67,10 +67,10 @@ export async function getRoutes(fastify: FastifyInstance) {
   });
 
   fastify.get(
-    "/get/all_owned_services",
+    "/all_owned_services",
     { onRequest: [fastify.authenticate] },
     async (request, reply) => {
-      let x = await prisma.serviceTable.findMany({
+      let x = await prisma.service_table.findMany({
         where: {
           Provider: {
             user_name: request.user.user_name,
@@ -85,27 +85,23 @@ export async function getRoutes(fastify: FastifyInstance) {
     }
   );
 
-  fastify.get(
-    "/get/all_owned_apps",
-    { onRequest: [fastify.authenticate] },
-    async (request, reply) => {
-      let x = await prisma.appTable.findMany({
-        where: {
-          Owner: {
-            user_name: request.user.user_name,
-          },
+  fastify.get("/all_owned_apps", { onRequest: [fastify.authenticate] }, async (request, reply) => {
+    let x = await prisma.app_table.findMany({
+      where: {
+        Owner: {
+          user_name: request.user.user_name,
         },
-      });
+      },
+    });
 
-      return reply.send({
-        success: true,
-        data: x,
-      });
-    }
-  );
+    return reply.send({
+      success: true,
+      data: x,
+    });
+  });
 
-  fastify.get("/get/all_public_services", async (request, reply) => {
-    let x = await prisma.serviceTable.findMany({
+  fastify.get("/all_public_services", async (request, reply) => {
+    let x = await prisma.service_table.findMany({
       select: {
         service_name: true,
         description: true,
@@ -123,59 +119,5 @@ export async function getRoutes(fastify: FastifyInstance) {
       success: true,
       data: x,
     });
-  });
-
-  fastify.post<{
-    Reply: SResponse<any>;
-    Params: {
-      etype: string;
-    };
-  }>("/add/:etype", { onRequest: [fastify.authenticate] }, async (request, reply) => {
-    const { etype } = request.params;
-    const { user_name } = request.user;
-    const data = request.body as any;
-
-    if (etype === EntityType.SERVICE) {
-      let x = await prisma.serviceTable.create({
-        data: {
-          service_name: data.service_name,
-          description: data.description,
-          api_base_uri: data.api_base_uri,
-          Provider: {
-            connect: {
-              user_name,
-            },
-          },
-        },
-      });
-
-      return reply.send({
-        success: true,
-        data: {
-          service_name: x.service_name,
-          service_id: x.id,
-        },
-      });
-    } else if (etype === EntityType.APP) {
-      let x = await prisma.appTable.create({
-        data: {
-          app_name: data.app_name,
-          description: data.description,
-          Owner: {
-            connect: {
-              user_name,
-            },
-          },
-        },
-      });
-
-      return reply.send({
-        success: true,
-        data: {
-          app_name: x.app_name,
-          app_id: x.id,
-        },
-      });
-    }
   });
 }

@@ -6,6 +6,7 @@ import jwtPlugin from "./plugins/jwt-auth";
 import { authRoutes } from "./routes/auth";
 import { miscRoutes } from "./routes/misc";
 import { getRoutes } from "./routes/get";
+import { createRoutes } from "./routes/create";
 
 export default async function appFactory(fastify: FastifyInstance) {
   const app = fastify;
@@ -17,8 +18,9 @@ export default async function appFactory(fastify: FastifyInstance) {
     origin: "*",
   });
 
-  app.register(getRoutes, { prefix: "/manage" });
   app.register(authRoutes, { prefix: "/auth" });
+  app.register(getRoutes, { prefix: "/manage/get" });
+  app.register(createRoutes, { prefix: "/manage/create"})
   app.register(miscRoutes, { prefix: "/" });
 
   return app;

@@ -1,4 +1,4 @@
-import { PrismaClient, Users } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { SResponse } from "../types/IQuery";
 import bcrypt from "@node-rs/bcrypt";
 

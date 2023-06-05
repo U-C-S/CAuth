@@ -7,46 +7,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
-  id            Int            @id @default(autoincrement())
-  user_name     String         @unique
+model users {
+  id            Int             @id @default(autoincrement())
+  user_name     String          @unique
   password      String
-  UserDetails   UserDetails?
-  ServicesOwned ServiceTable[]
-  AppsOwned     AppTable[]
+  UserDetails   user_details?
+  ServicesOwned service_table[]
+  AppsOwned     app_table[]
 }
 
-model UserDetails {
+model user_details {
   id      Int    @id @default(autoincrement())
   email   String @unique
   name    String
-  User    Users  @relation(fields: [usersId], references: [id])
+  User    users  @relation(fields: [usersId], references: [id])
   usersId Int    @unique
 }
 
-model ServiceTable {
-  id                 Int                  @id @default(autoincrement())
-  service_name       String               @unique
+model service_table {
+  id                 Int                     @id @default(autoincrement())
+  service_name       String                  @unique
   description        String
   api_base_uri       String
-  Provider           Users                @relation(fields: [providerId], references: [id])
+  Provider           users                   @relation(fields: [providerId], references: [id])
   providerId         Int
-  ServicesUsedByApps ServicesUsedByApps[]
+  ServicesUsedByApps services_used_by_apps[]
 }
 
-model AppTable {
-  id                 Int                  @id @default(autoincrement())
-  app_name           String               @unique
+model app_table {
+  id                 Int                     @id @default(autoincrement())
+  app_name           String                  @unique
   description        String
-  Owner              Users                @relation(fields: [ownerId], references: [id])
+  Owner              users                   @relation(fields: [ownerId], references: [id])
   ownerId            Int
-  ServicesUsedByApps ServicesUsedByApps[]
+  ServicesUsedByApps services_used_by_apps[]
 }
 
-model ServicesUsedByApps {
-  id             Int          @id @default(autoincrement())
-  App            AppTable     @relation(fields: [appTableId], references: [id])
+model services_used_by_apps {
+  id             Int           @id @default(autoincrement())
+  App            app_table     @relation(fields: [appTableId], references: [id])
   appTableId     Int
-  Service        ServiceTable @relation(fields: [serviceTableId], references: [id])
+  Service        service_table @relation(fields: [serviceTableId], references: [id])
   serviceTableId Int
+  config         Json
+}
+
+model keyvalue {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+  type  String @default("string")
 }
