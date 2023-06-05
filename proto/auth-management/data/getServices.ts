@@ -11,15 +11,15 @@ export interface IOwnedService {
   service_name: string;
   description: string;
   api_base_uri: string;
-  ServiceUsedByApps: {
-    id: number;
-    app_name: string;
-    description: string;
-    Owner: {
-      id: number;
-      user_name: string;
-    };
-  };
+  // ServiceUsedByApps: {
+  //   id: number;
+  //   app_name: string;
+  //   description: string;
+  //   Owner: {
+  //     id: number;
+  //     user_name: string;
+  //   };
+  // };
 }
 
 async function getAllOwnedServices() {
@@ -35,4 +35,24 @@ async function getAllOwnedServices() {
   return res as { success: boolean; data: IOwnedService[] };
 }
 
-export { getAllServices, getAllOwnedServices };
+async function createService(data: {
+  service_name: string;
+  description: string;
+  api_base_uri: string;
+}) {
+  const token = localStorage.getItem("token");
+  if (!token) return { success: false, data: null };
+
+  let req = await fetch(API_URL + "/manage/create/service", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  let res = await req.json();
+  return res as { success: boolean; data: IOwnedService };
+}
+
+export { getAllServices, getAllOwnedServices, createService };

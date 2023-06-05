@@ -1,35 +1,86 @@
-import { Button, Divider, Flex, Group } from "@mantine/core";
+import {
+  Badge,
+  Button,
+  Card,
+  Divider,
+  Flex,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { Layout } from "../../components/common/Layout";
 import { ProtectedPage } from "../../components/contexts/authContext";
 import { IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { IOwnedService, getAllOwnedServices } from "../../data/getServices";
+import { IOwnedService, createService, getAllOwnedServices } from "../../data/getServices";
+import { useDisclosure } from "@mantine/hooks";
 
 export default function Page() {
-  let [data, setData] = useState<IOwnedService[] | null>(null);
+  const [data, setData] = useState<IOwnedService[] | null>(null);
+  const [selectedService, setSelectedService] = useState<IOwnedService | null>(null); // [1
+  const [drawerOpened, drawerAction] = useDisclosure(false);
 
   useEffect(() => {
     getAllOwnedServices().then((res) => setData(res?.data));
   }, []);
 
+  const createNewService = async () => {
+    let res = await createService({
+      service_name: "New Service",
+      description: "New Service Description",
+      api_base_uri: process.env.NEXT_PUBLIC_API_URL + "/check",
+    });
+
+    if (res.success) {
+      setData((prev) => {
+        if (prev === null) prev = [];
+        prev?.push(res.data as IOwnedService);
+        return prev;
+      });
+    }
+  };
+
   return (
     <ProtectedPage>
       <Layout>
-        <Group position="apart">
-          <h1>Your Services</h1>
-          <Button leftIcon={<IconPlus />}>New</Button>
-        </Group>
+        {selectedService ? (
+          <div>
+            <Group position="apart">
+              <h1>{selectedService.service_name}</h1>
+              <Badge>ServiceId: {selectedService.id}</Badge>
+            </Group>
 
-        <Divider />
+            <Paper withBorder>
+              <Stack></Stack>
+            </Paper>
+          </div>
+        ) : (
+          <>
+            <Group position="apart">
+              <h1>Your Services</h1>
+              <Button leftIcon={<IconPlus />} onClick={() => createNewService()}>
+                New
+              </Button>
+            </Group>
 
-        <Flex wrap={"wrap"}>
-          {data.map((item) => (
-            <div key={item?.service_name} style={{ width: "30%", margin: "1rem" }}>
-              <h3>{item?.service_name}</h3>
-              <p>{item?.description}</p>
-            </div>
-          ))}
-        </Flex>
+            <Divider />
+
+            <Flex wrap={"wrap"} py={15}>
+              {data?.map((item) => (
+                <Card key={item.id} w={280} h={280}>
+                  <Stack spacing={"md"}>
+                    <Title order={3}>{item?.service_name}</Title>
+                    <Divider />
+                    <Text>URI: {item.api_base_uri}</Text>
+                    <Text>{item?.description}</Text>
+                  </Stack>
+                </Card>
+              ))}
+            </Flex>
+          </>
+        )}
       </Layout>
     </ProtectedPage>
   );
