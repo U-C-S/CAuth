@@ -1,2 +1,2 @@
 [workspace]
-members = ["packages/cauth-server", "proto/cauth-proxy"]
+members = ["proto/cauth-proxy"]
