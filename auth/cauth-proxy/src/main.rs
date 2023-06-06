@@ -1,13 +1,17 @@
 mod state;
 
-use std::{env, net::SocketAddr};
+use std::net::SocketAddr;
 
 use axum::{
+  body::Bytes,
   extract::State,
-  http::{HeaderMap, Method, StatusCode},
+  headers::{authorization::Bearer, Authorization},
+  http::{HeaderMap, Method},
   routing::{any, get},
-  Router, Server,
+  Router, Server, TypedHeader,
 };
+use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
+use serde::{Deserialize, Serialize};
 use sqlx::{query, query_as};
 use tower_http::cors::{Any, CorsLayer};
 
@@ -20,7 +24,7 @@ async fn main() {
   //   }
   // }
 
-  let mut DATABASE_URL: String = String::from("postgres://postgres:3721@localhost/cauth");
+  let mut DATABASE_URL: String = String::from("postgres://postgres:3721@localhost/cauth"); // TODO
 
   let pg_pool = state::create_postgres_instance(&DATABASE_URL)
     .await
@@ -41,35 +45,67 @@ async fn main() {
     .unwrap();
 }
 
-async fn handler(headers: HeaderMap, method: Method, State(pg_state): State<state::PgPoolType>) {
-  let req_service_name = headers.get("service-name").unwrap().to_str().unwrap();
-  // println!("{}", req_service_name);
-  // let req_endpoint = headers.get("service-endpoint").unwrap().to_str().unwrap();
-  // let req_headers = headers.get("service-headers").unwrap();
+async fn handler(
+  headers: HeaderMap,
+  method: Method,
+  TypedHeader(token): TypedHeader<Authorization<Bearer>>,
+  State(pg_state): State<state::PgPoolType>,
+  body: Bytes,
+) {
+  let service_headers: Result<ServiceHeaders, &str> = {
+    let (n, e, h) = (
+      headers.get("service-name"),
+      headers.get("service-endpoint"),
+      headers.get("service-headers"),
+    );
 
-  println!("{}", method);
+    match (n, e, h) {
+      (Some(n), Some(e), None) => Ok(ServiceHeaders {
+        name: n.to_str().expect("Invalid service-name"),
+        endpoint: e.to_str().expect("Invalid service-endpoint"),
+        headers: "",
+      }),
 
-  let row: (i64,) = query_as("SELECT api_base_uri FROM service_table WHERE service_name=$1")
-    .bind(req_service_name)
-    .fetch_one(&pg_state)
-    .await
-    .unwrap();
+      (Some(n), Some(e), Some(h)) => Ok(ServiceHeaders {
+        name: n.to_str().unwrap(),
+        endpoint: e.to_str().unwrap(),
+        headers: h.to_str().unwrap(),
+      }),
 
-  // println!("{}", row);
+      _ => Err("Invalid/Missing headers"),
+    }
+  };
 
-  let rowx = query!("SELECT key,value FROM keyvalue")
-    .fetch_all(&pg_state)
-    .await
-    .unwrap();
-  let val = rowx.len();
-  println!("{}", val);
+  let payload = decode::<BearerTokenPayload>(
+    token.token(),
+    &DecodingKey::from_secret("secret".as_ref()), // TODO
+    &Validation::new(Algorithm::HS256),
+  )
+  .expect("Invalid token");
 
-  // let api_url = conn.query(&preparee, &prepare_params).await.unwrap();
+  let row: (i64,) = query_as(
+    "SELECT serviceTableId, api_base_url, config FROM services_used_by_apps WHERE appTableId=$1",
+  )
+  .bind(payload.claims.appid)
+  .fetch_one(&pg_state)
+  .await
+  .unwrap();
+
+  // next steps:
+  // - get api_base_url from row which matches with service-name
+  // - call the service with api_base_url + service-endpoint
+  // - return the response to the client
 }
 
-struct Service {
-  service_name: String,
-  description: String,
-  api_base_url: String,
-  id: i64,
+struct ServiceHeaders<'a> {
+  name: &'a str,
+  endpoint: &'a str,
+  headers: &'a str,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct BearerTokenPayload {
+  appid: i64,
+  // config: String, // Use JWE to encrypt config
+  service_access_ids: Vec<i64>,
 }
