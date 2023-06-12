@@ -1,0 +1,8 @@
+{
+  "PROXY_URL": "http://localhost:3721",
+  "MANAGE_API_URL": "http://localhost:3100",
+  "MANAGE_WEB_URL": "http://localhost:3000",
+  "INFO_API_URL": "http://localhost:4000",
+  "FICTION_API_URL": "http://localhost:4100",
+  "FICTION_WEB_URL": "http://localhost:5100"
+}
