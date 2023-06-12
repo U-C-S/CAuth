@@ -8,9 +8,11 @@
 		"dotenv": "^16.0.3",
 		"fastify": "^4.17.0",
 		"fastify-plugin": "^4.5.0",
+		"jsonwebtoken": "^9.0.0",
 		"nodemon": "^2.0.22"
 	},
 	"devDependencies": {
+		"@types/jsonwebtoken": "^9.0.2",
 		"@types/node": "^20.2.5",
 		"pino-pretty": "^10.0.0",
 		"prisma": "^4.14.1",

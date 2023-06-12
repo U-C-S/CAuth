@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { SResponse } from "../types/IQuery";
 import { app_table, service_table } from "@prisma/client";
 import { jwtUserPayload } from "../types/jwt";
+import jsonwebtoken from "jsonwebtoken";
 
 enum EntityType {
   SERVICE = "service",
@@ -120,4 +121,57 @@ export async function getRoutes(fastify: FastifyInstance) {
       data: x,
     });
   });
+
+  fastify.get(
+    "/app_access_token",
+    { onRequest: [fastify.authenticate] },
+    async (request, reply) => {
+      let user = request.user as jwtUserPayload;
+      let { appid } = request.query as any;
+
+      let x = await prisma.app_table.findUnique({
+        where: {
+          id: parseInt(appid),
+        },
+
+        select: {
+          id: true,
+          ownerId: true,
+          ServicesUsedByApps: {
+            select: {
+              Service: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (x?.ownerId !== user.id) {
+        return reply.status(403).send({
+          success: false,
+          message: "You are not the owner of this app",
+        });
+      }
+
+      let token = jsonwebtoken.sign(
+        {
+          appid: x.id,
+          services_accessing: x.ServicesUsedByApps.map((x) => x.Service.id),
+        },
+        "supersecret",
+        { algorithm: "HS256", expiresIn: "60d" }
+      );
+
+      return reply.send({
+        success: true,
+        data: {
+          token,
+          issued_at: new Date(),
+        },
+      });
+    }
+  );
 }

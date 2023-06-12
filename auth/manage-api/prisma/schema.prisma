@@ -49,7 +49,7 @@ model services_used_by_apps {
   appTableId     Int
   Service        service_table @relation(fields: [serviceTableId], references: [id])
   serviceTableId Int
-  config         Json
+  config         Json?
 }
 
 model keyvalue {

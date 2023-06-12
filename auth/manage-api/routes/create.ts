@@ -81,4 +81,57 @@ export async function createRoutes(fastify: FastifyInstance) {
       data: x,
     });
   });
+
+  fastify.post(
+    "/link/:app/:service",
+    { onRequest: [fastify.authenticate] },
+    async (request, reply) => {
+      const { service, app } = request.params as any;
+
+      // TODO: check if service and app belongs to the user
+      let x = await fastify.prisma.services_used_by_apps.create({
+        data: {
+          App: {
+            connect: {
+              id: parseInt(app),
+            },
+          },
+          Service: {
+            connect: {
+              id: parseInt(service),
+            },
+          },
+          config: JSON.stringify(request.body),
+        },
+        select: {
+          id: true,
+          config: true,
+          App: {
+            select: {
+              app_name: true,
+              id: true,
+            },
+          },
+          Service: {
+            select: {
+              service_name: true,
+              id: true,
+              api_base_uri: true,
+              Provider: {
+                select: {
+                  user_name: true,
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return reply.send({
+        success: true,
+        data: x,
+      });
+    }
+  );
 }
