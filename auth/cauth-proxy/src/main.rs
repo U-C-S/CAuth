@@ -12,7 +12,7 @@ use axum::{
 };
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
-use sqlx::{query, query_as};
+use sqlx::query_as;
 use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
@@ -24,9 +24,9 @@ async fn main() {
   //   }
   // }
 
-  let mut DATABASE_URL: String = String::from("postgres://postgres:3721@localhost/cauth"); // TODO
+  let database_url: String = String::from("postgres://postgres:3721@localhost/cauth"); // TODO
 
-  let pg_pool = state::create_postgres_instance(&DATABASE_URL)
+  let pg_pool = state::create_postgres_instance(&database_url)
     .await
     .unwrap();
 
@@ -78,15 +78,20 @@ async fn handler(
 
   let payload = decode::<BearerTokenPayload>(
     token.token(),
-    &DecodingKey::from_secret("secret".as_ref()), // TODO
+    &DecodingKey::from_secret("supersecret".as_ref()), // TODO
     &Validation::new(Algorithm::HS256),
   )
   .expect("Invalid token");
 
-  let row: (i64,) = query_as(
-    "SELECT serviceTableId, api_base_url, config FROM services_used_by_apps WHERE appTableId=$1",
+  let row = query_as!(
+    ServiceTable,
+    "select id,api_base_uri from service_table where 
+      service_name=$1
+        and 
+      id in (select service_table_id from services_used_by_apps where app_table_id=$2)",
+    service_headers.unwrap().name,
+    payload.claims.appid,
   )
-  .bind(payload.claims.appid)
   .fetch_one(&pg_state)
   .await
   .unwrap();
@@ -103,9 +108,15 @@ struct ServiceHeaders<'a> {
   headers: &'a str,
 }
 
+#[derive(sqlx::Type)]
+struct ServiceTable {
+  id: i32,
+  api_base_uri: String,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 struct BearerTokenPayload {
-  appid: i64,
+  appid: i32,
+  services_accessing: Vec<i32>,
   // config: String, // Use JWE to encrypt config
-  service_access_ids: Vec<i64>,
 }
