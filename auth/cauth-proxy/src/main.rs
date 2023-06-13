@@ -1,16 +1,17 @@
 mod state;
 
-use std::net::SocketAddr;
+use std::{collections::HashMap, net::SocketAddr, str::FromStr};
 
 use axum::{
   body::Bytes,
   extract::State,
   headers::{authorization::Bearer, Authorization},
-  http::{HeaderMap, Method},
+  http::{HeaderMap, HeaderName, HeaderValue, Method},
   routing::{any, get},
   Router, Server, TypedHeader,
 };
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
+use reqwest::{Request, RequestBuilder, Url};
 use serde::{Deserialize, Serialize};
 use sqlx::query_as;
 use tower_http::cors::{Any, CorsLayer};
@@ -51,7 +52,7 @@ async fn handler(
   TypedHeader(token): TypedHeader<Authorization<Bearer>>,
   State(pg_state): State<state::PgPoolType>,
   body: Bytes,
-) {
+) -> (HeaderMap, Bytes) {
   let service_headers: Result<ServiceHeaders, &str> = {
     let (n, e, h) = (
       headers.get("service-name"),
@@ -63,7 +64,9 @@ async fn handler(
       (Some(n), Some(e), None) => Ok(ServiceHeaders {
         name: n.to_str().expect("Invalid service-name"),
         endpoint: e.to_str().expect("Invalid service-endpoint"),
-        headers: "",
+        headers: "{
+          \"User-Agent\": \"cauth-proxy\"
+        }",
       }),
 
       (Some(n), Some(e), Some(h)) => Ok(ServiceHeaders {
@@ -96,12 +99,40 @@ async fn handler(
   .await
   .unwrap();
 
+  let client = reqwest::Client::new();
+  let url = {
+    let path = service_headers.expect("Invalid service-headers").endpoint;
+    let x = row.api_base_uri + path;
+    Url::parse(x.as_str()).expect("Invalid url")
+  };
+  let headers = {
+    let headers_string = service_headers.expect("Invalid service-headers").headers;
+    let parsed_headers: HashMap<String, String> =
+      serde_json::from_str(headers_string).expect("Invalid headers");
+
+    let mut headers = HeaderMap::new();
+    for (key, val) in parsed_headers {
+      let name = HeaderName::from_str(key.as_str()).expect("Invalid header name");
+      let val = HeaderValue::from_str(val.as_str()).expect("Invalid header value");
+      headers.insert(name, val);
+    }
+    headers
+  };
+  let req = Request::new(method, url);
+  let req_builder = RequestBuilder::from_parts(client, req)
+    .headers(headers)
+    .body(body);
+  let resp = req_builder.send().await.expect("Invalid response");
+
+  (resp.headers().clone(), resp.bytes().await.unwrap())
+
   // next steps:
   // - get api_base_url from row which matches with service-name
   // - call the service with api_base_url + service-endpoint
   // - return the response to the client
 }
 
+#[derive(Debug, Clone, Copy)]
 struct ServiceHeaders<'a> {
   name: &'a str,
   endpoint: &'a str,
