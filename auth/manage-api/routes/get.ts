@@ -136,7 +136,7 @@ export async function getRoutes(fastify: FastifyInstance) {
 
         select: {
           id: true,
-          ownerId: true,
+          owner_id: true,
           ServicesUsedByApps: {
             select: {
               Service: {
@@ -149,7 +149,7 @@ export async function getRoutes(fastify: FastifyInstance) {
         },
       });
 
-      if (x?.ownerId !== user.id) {
+      if (x?.owner_id !== user.id) {
         return reply.status(403).send({
           success: false,
           message: "You are not the owner of this app",

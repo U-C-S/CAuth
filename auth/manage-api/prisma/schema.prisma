@@ -17,11 +17,11 @@ model users {
 }
 
 model user_details {
-  id      Int    @id @default(autoincrement())
-  email   String @unique
-  name    String
-  User    users  @relation(fields: [usersId], references: [id])
-  usersId Int    @unique
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  name     String
+  User     users  @relation(fields: [users_id], references: [id], map: "user_details_usersId_fkey")
+  users_id Int    @unique(map: "user_details_usersId_key")
 }
 
 model service_table {
@@ -29,8 +29,8 @@ model service_table {
   service_name       String                  @unique
   description        String
   api_base_uri       String
-  Provider           users                   @relation(fields: [providerId], references: [id])
-  providerId         Int
+  Provider           users                   @relation(fields: [provider_id], references: [id], map: "service_table_providerId_fkey")
+  provider_id        Int
   ServicesUsedByApps services_used_by_apps[]
 }
 
@@ -38,18 +38,18 @@ model app_table {
   id                 Int                     @id @default(autoincrement())
   app_name           String                  @unique
   description        String
-  Owner              users                   @relation(fields: [ownerId], references: [id])
-  ownerId            Int
+  Owner              users                   @relation(fields: [owner_id], references: [id], map: "app_table_ownerId_fkey")
+  owner_id           Int
   ServicesUsedByApps services_used_by_apps[]
 }
 
 model services_used_by_apps {
-  id             Int           @id @default(autoincrement())
-  App            app_table     @relation(fields: [appTableId], references: [id])
-  appTableId     Int
-  Service        service_table @relation(fields: [serviceTableId], references: [id])
-  serviceTableId Int
-  config         Json?
+  id               Int           @id @default(autoincrement())
+  App              app_table     @relation(fields: [app_table_id], references: [id], map: "services_used_by_apps_appTableId_fkey")
+  app_table_id     Int
+  Service          service_table @relation(fields: [service_table_id], references: [id], map: "services_used_by_apps_serviceTableId_fkey")
+  service_table_id Int
+  config           Json?
 }
 
 model keyvalue {
