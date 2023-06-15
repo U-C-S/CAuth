@@ -11,20 +11,12 @@ use axum::{
   Router, Server, TypedHeader,
 };
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
-use reqwest::{Request, RequestBuilder, Url};
 use serde::{Deserialize, Serialize};
 use sqlx::query_as;
 use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
 async fn main() {
-  // dotenvy::dotenv();
-  // for (key, val) in env::vars() {
-  //   if key == "DATABASE_URL" {
-  //     DATABASE_URL = val;
-  //   }
-  // }
-
   let database_url: String = String::from("postgres://postgres:3721@localhost/cauth"); // TODO
 
   let pg_pool = state::create_postgres_instance(&database_url)
@@ -99,11 +91,10 @@ async fn handler(
   .await
   .unwrap();
 
-  let client = reqwest::Client::new();
   let url = {
     let path = service_headers.expect("Invalid service-headers").endpoint;
     let x = row.api_base_uri + path;
-    Url::parse(x.as_str()).expect("Invalid url")
+    reqwest::Url::parse(x.as_str()).expect("Invalid url")
   };
   let headers = {
     let headers_string = service_headers.expect("Invalid service-headers").headers;
@@ -118,18 +109,15 @@ async fn handler(
     }
     headers
   };
-  let req = Request::new(method, url);
-  let req_builder = RequestBuilder::from_parts(client, req)
+
+  // TODO: Add a token to the request containing appid and other data including a secret
+  let client = reqwest::Client::new()
+    .request(method, url)
     .headers(headers)
     .body(body);
-  let resp = req_builder.send().await.expect("Invalid response");
+  let resp = client.send().await.unwrap();
 
   (resp.headers().clone(), resp.bytes().await.unwrap())
-
-  // next steps:
-  // - get api_base_url from row which matches with service-name
-  // - call the service with api_base_url + service-endpoint
-  // - return the response to the client
 }
 
 #[derive(Debug, Clone, Copy)]
