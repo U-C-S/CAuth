@@ -2,14 +2,9 @@ import { IconApi, IconApiApp, IconApps, IconGauge, IconKey } from "@tabler/icons
 
 const PAGE_DATA = [
   {
-    label: "Dashboard",
-    icon: IconGauge,
+    label: "Your Apps",
+    icon: IconApiApp,
     link: "/dashboard",
-  },
-  {
-    label: "Browse",
-    icon: IconApps,
-    link: "/dashboard/browse",
   },
   {
     label: "Your Services",
@@ -17,9 +12,9 @@ const PAGE_DATA = [
     link: "/dashboard/services",
   },
   {
-    label: "Your Apps",
-    icon: IconApiApp,
-    link: "/dashboard/applications",
+    label: "Browse",
+    icon: IconApps,
+    link: "/dashboard/browse",
   },
   {
     label: "Access Keys",

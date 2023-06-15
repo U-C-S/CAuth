@@ -5,6 +5,7 @@ import {
   Divider,
   Flex,
   Group,
+  Modal,
   Paper,
   Stack,
   Text,
@@ -20,7 +21,7 @@ import { useDisclosure } from "@mantine/hooks";
 export default function Page() {
   const [data, setData] = useState<IOwnedService[] | null>(null);
   const [selectedService, setSelectedService] = useState<IOwnedService | null>(null); // [1
-  const [drawerOpened, drawerAction] = useDisclosure(false);
+  const [isNewOpened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
     getAllOwnedServices().then((res) => setData(res?.data));
@@ -79,6 +80,7 @@ export default function Page() {
                 </Card>
               ))}
             </Flex>
+            <Modal></Modal>
           </>
         )}
       </Layout>
