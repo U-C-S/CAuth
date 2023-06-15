@@ -1,6 +1,85 @@
 import { FastifyInstance } from "fastify";
+import jwt from "jsonwebtoken";
+
+interface IEapToken {
+  user_id: number;
+  scope: string; // seperated by spaces
+  appid: string;
+}
 
 export async function infoRoutes(fastify: FastifyInstance) {
+  fastify.post("/accesstokengenerate", async (request, reply) => {
+    let { user_id, scope, appid } = request.body as any;
+    let x = await fastify.prisma.app_data_access_info.create({
+      data: {
+        user_id,
+        scope,
+        app_id: appid,
+      },
+    });
+
+    let eaptoken = jwt.sign(
+      {
+        internal_id: x.id,
+        user_id,
+        scope,
+        appid,
+      },
+      "supersecret",
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    reply.send({ eaptoken });
+  });
+
+  fastify.post("/checkappaccess", async (request, reply) => {
+    let { user_id, appid } = request.body as any;
+
+    let x = await fastify.prisma.app_data_access_info.findFirst({
+      where: {
+        AND: [
+          {
+            user_id: {
+              equals: user_id,
+            },
+          },
+          {
+            app_id: {
+              equals: appid,
+            },
+          },
+        ],
+      },
+    });
+
+    if (!x) {
+      // TODO: fetch app data from central server and send it to the client
+      return reply.status(204).send({
+        success: false,
+      });
+    } else {
+      let eaptoken = jwt.sign(
+        {
+          internal_id: x.id,
+          user_id,
+          scope: x.scope,
+          appid,
+        },
+        "supersecret",
+        {
+          expiresIn: "7d",
+        }
+      );
+
+      return reply.send({
+        success: true,
+        eaptoken,
+      });
+    }
+  });
+
   fastify.post("/info", { onRequest: [fastify.authenticate] }, async (request, reply) => {
     let body = request.body as any;
 

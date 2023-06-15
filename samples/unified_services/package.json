@@ -1,31 +1,33 @@
 {
   "name": "unified_services",
   "dependencies": {
-		"@fastify/cors": "^8.3.0",
-		"@fastify/jwt": "^7.0.0",
-		"@node-rs/bcrypt": "^1.7.1",
-		"@prisma/client": "^4.14.1",
-		"dotenv": "^16.0.3",
-		"fastify": "^4.17.0",
-		"fastify-plugin": "^4.5.0",
-		"nodemon": "^2.0.22"
-	},
-	"devDependencies": {
-		"@types/node": "^20.2.5",
-		"pino-pretty": "^10.0.0",
-		"prisma": "^4.14.1",
-		"ts-node": "^10.9.1",
-		"typescript": "^5.0.4"
-	},
+    "@fastify/cors": "^8.3.0",
+    "@fastify/jwt": "^7.0.0",
+    "@node-rs/bcrypt": "^1.7.1",
+    "@prisma/client": "^4.14.1",
+    "dotenv": "^16.0.3",
+    "jsonwebtoken": "^9.0.0",
+    "fastify": "^4.17.0",
+    "fastify-plugin": "^4.5.0",
+    "nodemon": "^2.0.22"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/node": "^20.2.5",
+    "pino-pretty": "^10.0.0",
+    "prisma": "^4.14.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
   "scripts": {
-		"dev": "nodemon server.ts",
-		"dev:tsnode": "ts-node server.ts",
-		"start:prod": "tsc && node dist/server.js",
-		"start:serverless": "tsc && node dist/serverless.js",
-		"vercel-build": "prisma generate && tsc",
-		"build": "tsc",
-		"init": "prisma init",
-		"pull": "prisma db pull",
-		"generate": "prisma generate"
-	}
+    "dev": "nodemon server.ts",
+    "dev:tsnode": "ts-node server.ts",
+    "start:prod": "tsc && node dist/server.js",
+    "start:serverless": "tsc && node dist/serverless.js",
+    "vercel-build": "prisma generate && tsc",
+    "build": "tsc",
+    "init": "prisma init",
+    "pull": "prisma db pull",
+    "generate": "prisma generate"
+  }
 }
