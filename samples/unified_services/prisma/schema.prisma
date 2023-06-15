@@ -16,16 +16,3 @@ model user_info {
   dob       DateTime?
   about     String?
 }
-
-model weather_user_data {
-  email           String            @unique
-  name            String
-  favorite_cities favorite_cities[]
-}
-
-model favorite_cities {
-  id                     Int                @id @default(autoincrement())
-  city                   String
-  weather_user_data      weather_user_data? @relation(fields: [weather_user_dataEmail], references: [email])
-  weather_user_dataEmail String?
-}

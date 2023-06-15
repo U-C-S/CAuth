@@ -14,7 +14,7 @@ let serverOpts: FastifyServerOptions = {
 };
 
 // server
-buildFastifyServer(serverOpts).listen({ port: parseInt(process.env.PORT || "3100") }, (err, address) => {
+buildFastifyServer(serverOpts).listen({ port: parseInt(process.env.PORT || "4000") }, (err, address) => {
 	if (err) {
 		console.error(err);
 	}

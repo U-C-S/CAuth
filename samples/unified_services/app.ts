@@ -3,7 +3,7 @@ import fastify, { FastifyInstance, FastifyServerOptions } from "fastify";
 
 import prismaPlugin from "./plugins/prisma";
 import jwtPlugin from "./plugins/jwt-auth";
-import { infoRoutes } from "./routes/info.routes";
+import { infoRoutes } from "./routes";
 
 export default async function appFactory(fastify: FastifyInstance) {
   const app = fastify;
@@ -15,7 +15,8 @@ export default async function appFactory(fastify: FastifyInstance) {
     origin: "*",
   });
 
-  app.register(infoRoutes, { prefix: "/info" });
+  app.register(infoRoutes, { prefix: "/api" });
+  app.get("/test", () => ({ hello: "world" }));
 
   return app;
 }
@@ -24,7 +25,3 @@ export function buildFastifyServer(opts: FastifyServerOptions = {}): FastifyInst
   app.register(appFactory);
   return app;
 }
-
-let x = await fetch(
-  "https://api.openweathermap.org/data/2.5/weather?q=London&appid=8f9b9b0b0b0b0b0b0b0b0b0b0b0b0b0b"
-);
