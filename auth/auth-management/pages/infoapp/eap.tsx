@@ -26,10 +26,10 @@ export default function Page() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("info_loggedin_token"),
       },
       body: JSON.stringify({
         appid,
-        user_id: localStorage.getItem("info_loggedin_user_id"),
       }),
     })
       .then((res) => res.json())
@@ -54,11 +54,11 @@ export default function Page() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("info_loggedin_token"),
       },
       body: JSON.stringify({
         appid: params?.appid,
         scope: params?.scope,
-        user_id: localStorage.getItem("info_loggedin_user_id"),
       }),
     });
   };
@@ -73,8 +73,9 @@ export default function Page() {
           <Paper shadow="sm" p="md" radius="md" withBorder>
             <Stack>
               <Card>
-                <Text>{`${params.appName} by ${params.appOwnerName}`}</Text>
-                <Text>{`wants to access your following info from ${params.serviceName}`}</Text>
+                
+                {/* <Text>{`${params.appName} by ${params.appOwnerName}`}</Text>
+                <Text>{`wants to access your following info from ${params.serviceName}`}</Text> */}
               </Card>
               <Text>{params.scope}</Text>
               <Button onClick={() => AuthorizeBtn()}>Authorize</Button>

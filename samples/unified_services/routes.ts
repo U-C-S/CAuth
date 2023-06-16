@@ -8,34 +8,98 @@ interface IEapToken {
 }
 
 export async function infoRoutes(fastify: FastifyInstance) {
-  fastify.post("/accesstokengenerate", async (request, reply) => {
-    let { user_id, scope, appid } = request.body as any;
-    let x = await fastify.prisma.app_data_access_info.create({
-      data: {
-        user_id,
-        scope,
-        app_id: appid,
+  fastify.post("/eaquerydata", async (request, reply) => {
+    let { eaptoken } = request.body as any;
+
+    let decoded = jwt.verify(eaptoken, "supersecret") as IEapToken;
+
+    if (!decoded) {
+      return reply.status(403).send({
+        success: false,
+        message: "Invalid token",
+      });
+    }
+
+    let x = await fastify.prisma.app_data_access_info.findFirst({
+      where: {
+        AND: [
+          {
+            user_id: {
+              equals: decoded.user_id,
+            },
+          },
+          {
+            app_id: {
+              equals: decoded.appid,
+            },
+          },
+        ],
       },
     });
 
-    let eaptoken = jwt.sign(
-      {
-        internal_id: x.id,
-        user_id,
-        scope,
-        appid,
-      },
-      "supersecret",
-      {
-        expiresIn: "7d",
-      }
-    );
+    if (!x) {
+      return reply.status(403).send({
+        success: false,
+        message: "Invalid token",
+      });
+    }
 
-    reply.send({ eaptoken });
+    let data = await fastify.prisma.app_data.findMany({
+      where: {
+        app_id: {
+          equals: decoded.appid,
+        },
+      },
+    });
+
+    reply.send({
+      success: true,
+      data,
+    });
   });
 
-  fastify.post("/checkappaccess", async (request, reply) => {
-    let { user_id, appid } = request.body as any;
+  fastify.post(
+    "/accesstokengenerate",
+    { onRequest: [fastify.authenticate] },
+    async (request, reply) => {
+      let { scope, appid } = request.body as any;
+      let user_id = request.user.id;
+
+      if (!user_id) {
+        return reply.status(403).send({
+          success: false,
+          message: "Invalid user token",
+        });
+      }
+
+      let x = await fastify.prisma.app_data_access_info.create({
+        data: {
+          user_id,
+          scope,
+          app_id: appid,
+        },
+      });
+
+      let eaptoken = jwt.sign(
+        {
+          internal_id: x.id,
+          user_id,
+          scope,
+          appid,
+        },
+        "supersecret",
+        {
+          expiresIn: "7d",
+        }
+      );
+
+      reply.send({ eaptoken });
+    }
+  );
+
+  fastify.post("/checkappaccess", { onRequest: [fastify.authenticate] }, async (request, reply) => {
+    let { appid } = request.body as any;
+    let user_id = request.user.id;
 
     let x = await fastify.prisma.app_data_access_info.findFirst({
       where: {
@@ -152,7 +216,6 @@ export async function infoRoutes(fastify: FastifyInstance) {
         email: body.email,
         password: body.password,
         name: body.name,
-        ...body,
       },
     });
 

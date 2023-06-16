@@ -188,8 +188,6 @@ importers:
         specifier: ^5.1.3
         version: 5.1.3
 
-  samples/info_app: {}
-
   samples/unified_services:
     dependencies:
       '@fastify/cors':
@@ -213,10 +211,16 @@ importers:
       fastify-plugin:
         specifier: ^4.5.0
         version: 4.5.0
+      jsonwebtoken:
+        specifier: ^9.0.0
+        version: 9.0.0
       nodemon:
         specifier: ^2.0.22
         version: 2.0.22
     devDependencies:
+      '@types/jsonwebtoken':
+        specifier: ^9.0.2
+        version: 9.0.2
       '@types/node':
         specifier: ^20.2.5
         version: 20.2.5

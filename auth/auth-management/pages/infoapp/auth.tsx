@@ -29,7 +29,7 @@ export default function Page() {
     let res = await x.json();
 
     if (res.token) {
-      localStorage.setItem("info_loggedin_user_id", res.token);
+      localStorage.setItem("info_loggedin_token", res.token);
       Router.push("/infoapp/home");
     } else {
       alert("Error: " + res.message);
