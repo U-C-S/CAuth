@@ -13,27 +13,25 @@ interface IGetItem {
   Reply: SResponse<service_table | app_table>;
   Params: {
     etype: string;
-    ename: string;
+    id: number;
   };
 }
 
 export async function getRoutes(fastify: FastifyInstance) {
   let { prisma } = fastify;
 
-  fastify.get<IGetItem>("/:etype/:ename", async (request, reply) => {
-    const { etype, ename } = request.params;
+  fastify.get<IGetItem>("/:etype/:id", async (request, reply) => {
+    const { etype, id } = request.params;
 
     if (etype === EntityType.SERVICE) {
       let x = await prisma.service_table.findUnique({
-        where: {
-          service_name: ename,
-        },
+        where: { id },
       });
 
       if (!x) {
         return reply.status(404).send({
           success: false,
-          message: `Service "${ename}" not found`,
+          message: `Service "${id}" not found`,
         });
       }
 
@@ -43,15 +41,13 @@ export async function getRoutes(fastify: FastifyInstance) {
       });
     } else if (etype === EntityType.APP) {
       let x = await prisma.app_table.findUnique({
-        where: {
-          app_name: ename,
-        },
+        where: { id },
       });
 
       if (!x) {
         return reply.status(404).send({
           success: false,
-          message: `App "${ename}" not found`,
+          message: `App "${id}" not found`,
         });
       }
 

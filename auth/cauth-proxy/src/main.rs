@@ -81,9 +81,10 @@ async fn handler(
   let row = query_as!(
     ServiceTable,
     "select id,api_base_uri from service_table where 
-      service_name=$1
-        and 
-      id in (select service_table_id from services_used_by_apps where app_table_id=$2)",
+      service_name=$1 and id in 
+        (select service_table_id from services_used_by_apps 
+          where app_table_id=$2
+        )",
     service_headers.unwrap().name,
     payload.claims.appid,
   )

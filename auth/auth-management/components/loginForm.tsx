@@ -37,7 +37,7 @@ export function LoginForm(props: PaperProps) {
       localStorage.setItem("user_name", user_name as string);
       // setAuth({ user_name, token });
 
-      Router.push(`/dashboard`);
+      Router.push(`/dashboard/browse`);
     }
   };
 
