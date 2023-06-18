@@ -1,10 +1,14 @@
 import { FastifyInstance } from "fastify";
 import jwt from "jsonwebtoken";
+import { RequestInfo, RequestInit } from "node-fetch";
+
+const fetch = (...args: [URL | RequestInfo]) =>
+  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 interface IEapToken {
   user_id: number;
   scope: string; // seperated by spaces
-  appid: string;
+  appid: number;
 }
 
 export async function infoRoutes(fastify: FastifyInstance) {
@@ -44,7 +48,7 @@ export async function infoRoutes(fastify: FastifyInstance) {
       });
     }
 
-    let data = await fastify.prisma.app_data.findMany({
+    let data = await fastify.prisma.app_data_access_info.findMany({
       where: {
         app_id: {
           equals: decoded.appid,
@@ -116,12 +120,25 @@ export async function infoRoutes(fastify: FastifyInstance) {
           },
         ],
       },
+      select: {
+        id: true,
+        scope: true,
+        user_info: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
 
     if (!x) {
       // TODO: fetch app data from central server and send it to the client
-      return reply.status(204).send({
+      let app_data_req = await fetch("http://localhost:3000/manage/get/app/" + appid);
+      let app_data_json = await app_data_req.json();
+      console.log(app_data_json);
+      return reply.status(200).send({
         success: false,
+        app_data: app_data_json,
       });
     } else {
       let eaptoken = jwt.sign(

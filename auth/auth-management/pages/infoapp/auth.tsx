@@ -18,8 +18,8 @@ export default function Page() {
   });
 
   const handleSubmit = async (isRegister: boolean, values: any) => {
-    let url = isRegister ? "/api/auth/register" : "/api/auth/login";
-    let x = await fetch("http://localhost:4000" + url, {
+    let url = isRegister ? "/register" : "/login";
+    let x = await fetch("http://localhost:4000/api/auth" + url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
