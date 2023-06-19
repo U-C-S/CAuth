@@ -1,6 +1,4 @@
 packages:
+  - "samples/Fiction-Logs/web"
   - "auth/auth-management"
   - "auth/manage-api"
-  - "samples/unified_services"
-  - "samples/Fiction-Logs/api"
-  - "samples/Fiction-Logs/web"

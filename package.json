@@ -6,10 +6,10 @@
   },
   "scripts": {
     "a:proxy": "cargo run -p cauth-proxy",
-    "a:manage_api": "pnpm -F manage-api run dev",
+    "a:manage_api": "cd auth/manage-api && npm run dev",
     "a:manage_web": "cd auth/auth-management && pnpm run dev",
     "s:fiction_api": "pnpm -F api run dev",
     "s:fiction_web": "pnpm -F web run dev",
-    "s:info_api": "pnpm -F unified_services run dev"
+    "s:info_api": "cd samples/unified_services && npm run dev"
   }
 }
