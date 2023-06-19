@@ -10,18 +10,19 @@ enum EntityType {
 }
 
 interface IGetItem {
-  Reply: SResponse<service_table | app_table>;
+  Reply: SResponse<any>;
   Params: {
     etype: string;
-    id: number;
+    eid: string;
   };
 }
 
 export async function getRoutes(fastify: FastifyInstance) {
   let { prisma } = fastify;
 
-  fastify.get<IGetItem>("/:etype/:id", async (request, reply) => {
-    const { etype, id } = request.params;
+  fastify.get<IGetItem>("/:etype/:eid", async (request, reply) => {
+    const { etype, eid } = request.params;
+    let id = parseInt(eid);
 
     if (etype === EntityType.SERVICE) {
       let x = await prisma.service_table.findUnique({
@@ -42,6 +43,16 @@ export async function getRoutes(fastify: FastifyInstance) {
     } else if (etype === EntityType.APP) {
       let x = await prisma.app_table.findUnique({
         where: { id },
+        select: {
+          id: true,
+          app_name: true,
+          description: true,
+          Owner: {
+            select: {
+              user_name: true,
+            },
+          },
+        },
       });
 
       if (!x) {

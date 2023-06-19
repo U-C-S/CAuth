@@ -1,9 +1,6 @@
+import axios from "axios";
 import { FastifyInstance } from "fastify";
 import jwt from "jsonwebtoken";
-import { RequestInfo, RequestInit } from "node-fetch";
-
-const fetch = (...args: [URL | RequestInfo]) =>
-  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 interface IEapToken {
   user_id: number;
@@ -39,22 +36,37 @@ export async function infoRoutes(fastify: FastifyInstance) {
           },
         ],
       },
+      select: {
+        scope: true,
+        user_info: {
+          select: {
+            about: true,
+            dob: true,
+            email: true,
+            name: true,
+          },
+        },
+      },
     });
 
-    if (!x) {
+    if (!x || !x.user_info) {
       return reply.status(403).send({
         success: false,
         message: "Invalid token",
       });
     }
 
-    let data = await fastify.prisma.app_data_access_info.findMany({
-      where: {
-        app_id: {
-          equals: decoded.appid,
-        },
-      },
-    });
+    let scope = x.scope.split(" ");
+
+    // get values in a object for scope from x.user_info
+    let data = scope.reduce((acc: Record<string, any>, sc: string) => {
+      // @ts-ignore
+      acc[sc] = x?.user_info[sc];
+      return acc;
+    }, {});
+    // let data = scope.map((sc) => {
+    //   return x?.user_info[sc]
+    // })
 
     reply.send({
       success: true,
@@ -133,8 +145,8 @@ export async function infoRoutes(fastify: FastifyInstance) {
 
     if (!x) {
       // TODO: fetch app data from central server and send it to the client
-      let app_data_req = await fetch("http://localhost:3000/manage/get/app/" + appid);
-      let app_data_json = await app_data_req.json();
+      let app_data_req = await axios.get("http://localhost:3100/manage/get/app/" + appid);
+      let app_data_json = app_data_req.data;
       console.log(app_data_json);
       return reply.status(200).send({
         success: false,
