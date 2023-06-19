@@ -1,4 +1,4 @@
-import { Group } from "@mantine/core";
+import { Button, Center, Group, Input, Paper, Stack, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useLocalStorage } from "@mantine/hooks";
 import Router from "next/router";
@@ -13,14 +13,11 @@ export default function Page() {
       about: "",
     },
   });
-  const [userToken] = useLocalStorage({
-    key: "info_loggedin_token",
-    defaultValue: null,
-  });
 
   useEffect(() => {
+    let userToken = localStorage.getItem("info_loggedin_token");
     if (!userToken) {
-      Router.push("/infoapp/auth");
+      Router.push("/infoapp");
       return;
     }
 
@@ -45,7 +42,7 @@ export default function Page() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
+        Authorization: "Bearer " + localStorage.getItem("info_loggedin_token"),
       },
       body: JSON.stringify(values),
     });
@@ -53,25 +50,30 @@ export default function Page() {
 
   function handleLogout() {
     localStorage.removeItem("info_loggedin_token");
-    Router.push("/infoapp/auth");
+    Router.push("/infoapp");
   }
 
   return (
-    <div className="details-page-container">
-      <h1>Details Page</h1>
-      <form onSubmit={form.onSubmit((v) => handleSubmit(v))}>
-        <input type="text" placeholder="Name" {...form.getInputProps("name")} />
-        <br />
-        <input type="text" placeholder="Occupation" {...form.getInputProps("email")} />
-        <br />
-        <input type="date" placeholder="Age" {...form.getInputProps("dob")} />
-        <br />
-        <input type="text" placeholder="About" {...form.getInputProps("about")} />
-        <Group>
-          <button type="submit">Save</button>
-          <button onClick={handleLogout}>Logout</button>
-        </Group>
-      </form>
-    </div>
+    <Center>
+      <Stack>
+        <Title order={2} align="center">
+          Info App/API Demo
+        </Title>
+        <Paper withBorder p={"md"}>
+          <form onSubmit={form.onSubmit((v) => handleSubmit(v))}>
+            <Stack>
+              <TextInput label="Name" {...form.getInputProps("name")} />
+              <TextInput label="Email" {...form.getInputProps("email")} />
+              {/* <Input type="date" {...form.getInputProps("dob")} /> */}
+              <TextInput label="About" {...form.getInputProps("about")} />
+              <Group>
+                <Button type="submit">Save</Button>
+                <Button onClick={handleLogout}>Logout</Button>
+              </Group>
+            </Stack>
+          </form>
+        </Paper>
+      </Stack>
+    </Center>
   );
 }

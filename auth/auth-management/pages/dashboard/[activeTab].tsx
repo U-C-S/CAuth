@@ -92,7 +92,11 @@ function OwnedTab() {
     });
   }, []);
 
-  const createNewService = async (values) => {
+  const createNewService = async (values: {
+    service_name: string;
+    description: string;
+    api_base_uri: string;
+  }) => {
     let res = await fetch("http://localhost:3100/manage/create/service", {
       method: "POST",
       headers: {
@@ -107,7 +111,7 @@ function OwnedTab() {
     }
   };
 
-  const createNewApp = async (values) => {
+  const createNewApp = async (values: { app_name: string; description: string }) => {
     let res = await fetch("http://localhost:3100/manage/create/app", {
       method: "POST",
       headers: {

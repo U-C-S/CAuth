@@ -10,33 +10,36 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-
-interface EAP_Data {
-  appName: string;
-  appOwnerName: string;
-  serviceName: string;
-  permissions: string[];
-}
 
 export default function Page() {
   let [params, setParams] = useState<{
     redirect_uri: string;
     appid: number;
     scope: string | null;
+    data: {
+      app_name: string;
+      Owner: {
+        user_name: string;
+      };
+    };
   } | null>(null);
 
   useEffect(() => {
+    let token = localStorage.getItem("info_loggedin_token");
+    if (!token) return;
+
     let searchParams = new URLSearchParams(window.location.search);
     let redirect_uri = searchParams.get("redirect_uri") as string;
     let appid = parseInt(searchParams.get("appid") ?? "0");
     let scope = searchParams.get("scope");
 
-    let req = fetch("http://localhost:4000/api/checkappaccess", {
+    fetch("http://localhost:4000/api/checkappaccess", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("info_loggedin_token"),
+        Authorization: "Bearer " + token,
       },
       body: JSON.stringify({
         appid,
@@ -51,14 +54,6 @@ export default function Page() {
         }
       });
   }, []);
-  console.log(params);
-
-  // let x: EAP_Data = {
-  //   appName: "GuestApp",
-  //   appOwnerName: "GuestAppOwner",
-  //   serviceName: "YourAppXAccount",
-  //   permissions: ["Email", "Phone", "Local Storage"],
-  // };
 
   const AuthorizeBtn = async () => {
     let req = await fetch("http://localhost:4000/api/accesstokengenerate", {
@@ -101,7 +96,12 @@ export default function Page() {
           </Paper>
         </Stack>
       ) : (
-        <Loader />
+        <Center>
+          <Stack align="center">
+            <Text size="lg">You might need to login into "Info App" to grant permission</Text>
+            <Link href={"/infoapp"}>Login</Link>
+          </Stack>
+        </Center>
       )}
     </Center>
   );
