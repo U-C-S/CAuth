@@ -95,6 +95,7 @@ async fn handler(
   let url = {
     let path = service_headers.expect("Invalid service-headers").endpoint;
     let x = row.api_base_uri + path;
+    // println!("{}", x);
     reqwest::Url::parse(x.as_str()).expect("Invalid url")
   };
   let headers = {
@@ -102,7 +103,7 @@ async fn handler(
     let parsed_headers: HashMap<String, String> =
       serde_json::from_str(headers_string).expect("Invalid headers");
 
-    let mut headers = HeaderMap::new();
+    let mut headers = headers.clone();
     for (key, val) in parsed_headers {
       let name = HeaderName::from_str(key.as_str()).expect("Invalid header name");
       let val = HeaderValue::from_str(val.as_str()).expect("Invalid header value");
