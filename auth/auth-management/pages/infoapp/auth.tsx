@@ -1,4 +1,4 @@
-import { Paper } from "@mantine/core";
+import { Button, Divider, Group, Paper, Stack, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Router from "next/router";
 
@@ -37,35 +37,60 @@ export default function Page() {
   };
 
   return (
-    <div className="login-container">
+    <Group align="flex-start" mx={"auto"} mt={40} w={500}>
       <Paper withBorder>
-        <h1>Login</h1>
+        <Title order={2} align="center">
+          Login
+        </Title>
+        <Divider />
         <form onSubmit={loginForm.onSubmit((v) => handleSubmit(false, v))}>
-          <input type="email" placeholder="Email" {...loginForm.getInputProps("email")} />
-          <input type="password" placeholder="Password" {...loginForm.getInputProps("password")} />
-          <button type="submit">Login</button>
+          <Stack px={15} py={5}>
+            <TextInput
+              required
+              type="email"
+              placeholder="Email"
+              {...loginForm.getInputProps("email")}
+            />
+            <TextInput
+              required
+              type="password"
+              placeholder="Password"
+              {...loginForm.getInputProps("password")}
+            />
+            <Button type="submit">Login</Button>
+          </Stack>
         </form>
       </Paper>
 
       <Paper withBorder>
-        <h1>Register</h1>
+        <Title order={2} align="center">
+          Register
+        </Title>
+        <Divider />
         <form onSubmit={registerForm.onSubmit((v) => handleSubmit(true, v))}>
-          <input type="text" placeholder="name" required {...registerForm.getInputProps("name")} />
-          <input
-            type="email"
-            placeholder="name"
-            required
-            {...registerForm.getInputProps("email")}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            required
-            {...registerForm.getInputProps("password")}
-          />
-          <button type="submit">Login</button>
+          <Stack px={15} py={5}>
+            <TextInput
+              type="text"
+              placeholder="name"
+              required
+              {...registerForm.getInputProps("name")}
+            />
+            <TextInput
+              type="email"
+              placeholder="email"
+              required
+              {...registerForm.getInputProps("email")}
+            />
+            <TextInput
+              type="password"
+              placeholder="Password"
+              required
+              {...registerForm.getInputProps("password")}
+            />
+            <Button type="submit">Login</Button>
+          </Stack>
         </form>
       </Paper>
-    </div>
+    </Group>
   );
 }

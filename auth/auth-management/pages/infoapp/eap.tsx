@@ -7,12 +7,9 @@ import {
   Group,
   Loader,
   Paper,
-  Progress,
   Stack,
   Text,
-  Title,
 } from "@mantine/core";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 interface EAP_Data {
@@ -50,10 +47,11 @@ export default function Page() {
         if (res.success) {
           window.location.href = `${redirect_uri}?token=${res.eaptoken}`;
         } else {
-          setParams({ redirect_uri, appid, scope });
+          setParams({ redirect_uri, appid, scope, ...res.app_data });
         }
       });
   }, []);
+  console.log(params);
 
   // let x: EAP_Data = {
   //   appName: "GuestApp",
@@ -74,23 +72,23 @@ export default function Page() {
         scope: params?.scope,
       }),
     });
+    let res = await req.json();
+    if (res.eaptoken) {
+      window.location.href = `${params?.redirect_uri}?token=${res.eaptoken}`;
+    } else {
+      alert("Something went wrong");
+    }
   };
 
   return (
     <Center w={"100vw"} h={"100vh"}>
       {params ? (
         <Stack>
-          <Title order={2} align="center">
-            Authorize
-          </Title>
           <Paper shadow="sm" p="md" radius="md" withBorder>
             <Stack>
               <Card>
-                <Text>Fiction Logs by Author: Chanakya</Text>
-                <Text>wants to access your following info from Info API:</Text>
-
-                {/* <Text>{`${params.appName} by ${params.appOwnerName}`}</Text>
-                <Text>{`wants to access your following info from ${params.serviceName}`}</Text> */}
+                <Text>{`${params?.data.app_name} by ${params?.data?.Owner.user_name}`}</Text>
+                <Text>{`wants to access your following info from this Service`}</Text>
               </Card>
               <Group position="center">
                 {params.scope?.split(" ").map((scope) => (
