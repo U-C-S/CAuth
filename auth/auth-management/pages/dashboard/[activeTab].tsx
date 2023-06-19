@@ -18,13 +18,16 @@ import {
   Textarea,
   MultiSelect,
   Center,
+  Select,
+  ActionIcon,
 } from "@mantine/core";
 import { AuthContext, ProtectedPage } from "../../components/contexts/authContext";
 import PAGE_DATA from "../../data/page_data";
-import { IconPlus } from "@tabler/icons-react";
+import { IconCopy, IconPlus } from "@tabler/icons-react";
 import { useRouter } from "next/router";
-import { useDisclosure } from "@mantine/hooks";
+import { useClipboard, useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
+import { BrowseTab } from "../../components/tabs/browse";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -50,6 +53,8 @@ const useStyles = createStyles((theme) => ({
 function OwnedTab() {
   let [appsList, setAppsList] = useState([]);
   let [servicesList, setServicesList] = useState([]);
+  const [sopened, { open: sopen, close: sclose }] = useDisclosure(false);
+  const [aopened, { open: aopen, close: aclose }] = useDisclosure(false);
 
   const serviceForm = useForm({
     initialValues: {
@@ -118,11 +123,11 @@ function OwnedTab() {
   };
 
   return (
-    <Group position="apart">
+    <Group position="apart" align="start" px={10}>
       <Paper withBorder w={"48%"} p={5}>
         <Group position="apart" p={5}>
           <Title order={3}>Your Services</Title>
-          <Button leftIcon={<IconPlus />} onClick={() => createNewService()}>
+          <Button leftIcon={<IconPlus />} onClick={sopen}>
             New
           </Button>
         </Group>
@@ -141,7 +146,7 @@ function OwnedTab() {
       <Paper withBorder w={"48%"} p={5}>
         <Group position="apart" p={5}>
           <Title order={3}>Your Apps</Title>
-          <Button leftIcon={<IconPlus />} onClick={() => createNewApp()}>
+          <Button leftIcon={<IconPlus />} onClick={aopen}>
             New
           </Button>
         </Group>
@@ -157,7 +162,12 @@ function OwnedTab() {
         </ScrollArea>
       </Paper>
 
-      <Drawer position="left" size={500} opened={false} onClose={close} title="Create New Service">
+      <Drawer
+        position="left"
+        size={500}
+        opened={sopened}
+        onClose={sclose}
+        title="Create New Service">
         <form onSubmit={serviceForm.onSubmit((v) => createNewService(v))}>
           <Stack p={5}>
             <TextInput
@@ -177,8 +187,8 @@ function OwnedTab() {
         </form>
       </Drawer>
 
-      <Drawer position="right" size={500} opened={false} onClose={close} title="Create New App">
-        <form onSubmit={appForm.onSubmit((v) => createApp(v))}>
+      <Drawer position="right" size={500} opened={aopened} onClose={aclose} title="Create New App">
+        <form onSubmit={appForm.onSubmit((v) => createNewApp(v))}>
           <Stack p={5}>
             <TextInput required label="App Name" {...appForm.getInputProps("app_name")} />
             <Textarea label="Description" {...appForm.getInputProps("description")} />
@@ -200,20 +210,79 @@ function OwnedTab() {
 }
 
 function AccessTokensTab() {
-  const [tokens, setTokens] = useState([]);
+  const [ownedAppList, setAppList] = useState<any[]>([]);
+  const [accessToken, setAccessToken] = useState("");
+  const [selectedApp, setSelectedApp] = useState<string | null>(null);
+  const clipboard = useClipboard();
+
   useEffect(() => {
-    
+    fetch("http://localhost:3100/manage/get/all_owned_apps", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        let data = res.data.map((app: any) => app.app_name as string);
+        setAppList(res.data);
+      });
   }, []);
+
+  const generateAccessToken = async () => {
+    if (!selectedApp) {
+      return;
+    }
+    let appid = ownedAppList?.find((app: any) => app.app_name === selectedApp).id;
+    let x = await fetch("http://localhost:3100/manage/get/app_access_token?appid=" + appid, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    let res = await x.json();
+
+    if (res.success) {
+      setAccessToken(res.data.token);
+    } else {
+      setAccessToken("Error");
+    }
+  };
+
   return (
     <Center>
-      <Group position="apart">
-        <Title order={3}>Access Tokens</Title>
-        <Button leftIcon={<IconPlus />}>New</Button>
-      </Group>
       <Stack>
-        {
+        <Title order={3} w={500} align="center">
+          Generate Access Tokens for your Application to access the Services associated to it
+        </Title>
 
-        }
+        <Paper withBorder w={500} p={5}>
+          <Stack spacing={"lg"} align="center" py={10}>
+            <Select
+              label="Choose App"
+              data={ownedAppList.map((app: any) => app.app_name as string)}
+              w={"90%"}
+              value={selectedApp}
+              onChange={setSelectedApp}
+            />
+            <Button w={250} onClick={() => generateAccessToken()}>
+              Generate Access Token
+            </Button>
+            <Divider w={"100%"} />
+
+            <Textarea
+              placeholder="Your Generated Access Token should appear here"
+              w={"90%"}
+              rows={10}
+              value={accessToken}
+              rightSection={
+                <ActionIcon onClick={() => clipboard.copy(accessToken)}>
+                  <IconCopy />
+                </ActionIcon>
+              }
+            />
+          </Stack>
+        </Paper>
       </Stack>
     </Center>
   );
@@ -238,7 +307,6 @@ function NewLayout() {
           value={router.query.activeTab as string}
           onTabChange={(value) => router.push(`/dashboard/${value}`)}
           classNames={{
-            tabsList: classes.tabsList,
             tab: classes.tab,
             panel: classes.panel,
           }}>
@@ -251,11 +319,15 @@ function NewLayout() {
             </Tabs.Tab>
           </Tabs.List>
 
-          <Tabs.Panel value="browse">Browse</Tabs.Panel>
+          <Tabs.Panel value="browse">
+            <BrowseTab />
+          </Tabs.Panel>
           <Tabs.Panel value="owned">
             <OwnedTab />
           </Tabs.Panel>
-          <Tabs.Panel value="access_tokens">Access Tokens</Tabs.Panel>
+          <Tabs.Panel value="access_tokens">
+            <AccessTokensTab />
+          </Tabs.Panel>
         </Tabs>
       </Container>
     </div>
